@@ -53,8 +53,11 @@ export interface ScheduleInput {
 
 export interface Account {
   clubId: string;
+  clubName: string | null;
   membershipNumber: string;
   hasPassword: boolean;
+  fullName: string | null;
+  onboardedAt: string | null;
   updatedAt: string;
 }
 
@@ -62,6 +65,19 @@ export interface UpdateAccountInput {
   clubId?: string;
   membershipNumber?: string;
   password?: string;
+}
+
+export interface Club {
+  id: string;
+  name: string;
+}
+
+export interface OnboardingInput {
+  fullName: string;
+  clubId: string;
+  clubName: string;
+  membershipNumber: string;
+  password: string;
 }
 
 export interface RunNowResult {
