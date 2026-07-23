@@ -8,4 +8,4 @@ export interface NavTab {
  * "Naar dashboard"-knop). Nieuwe tabs (Contact, Over ons, Hoe werkt het, ...)
  * voegen hier een entry toe en registreren hun route in App.tsx.
  */
-export const NAV_TABS: NavTab[] = [];
+export const NAV_TABS: NavTab[] = [{ path: '/contact', label: 'Contact' }];
