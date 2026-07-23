@@ -7,6 +7,8 @@ import { AccountModule } from './account/account.module';
 import { SchedulesModule } from './schedules/schedules.module';
 import { BookingModule } from './booking/booking.module';
 import { MembersModule } from './members/members.module';
+import { ClubsModule } from './clubs/clubs.module';
+import { OnboardingModule } from './onboarding/onboarding.module';
 import { AuthModule } from './auth/auth.module';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 
@@ -22,6 +24,8 @@ import { JwtAuthGuard } from './auth/jwt-auth.guard';
     SchedulesModule,
     BookingModule,
     MembersModule,
+    ClubsModule,
+    OnboardingModule,
   ],
   providers: [{ provide: APP_GUARD, useClass: JwtAuthGuard }],
 })

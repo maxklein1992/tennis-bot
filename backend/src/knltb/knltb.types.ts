@@ -30,6 +30,11 @@ export interface MemberSearchResult {
   name: string;
 }
 
+export interface ClubSearchResult {
+  id: string;
+  name: string;
+}
+
 export interface FoundSlot {
   courtId: string;
   courtName: string;
