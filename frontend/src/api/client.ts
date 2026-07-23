@@ -6,12 +6,19 @@ import type {
   ScheduleInput,
   UpdateAccountInput,
 } from './types';
+import { clearToken, getToken } from './auth';
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
-  const res = await fetch(`/api${path}`, {
-    headers: { 'Content-Type': 'application/json' },
-    ...init,
-  });
+  const token = getToken();
+  const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+  if (token) headers.Authorization = `Bearer ${token}`;
+
+  const res = await fetch(`/api${path}`, { headers, ...init });
+
+  if (res.status === 401) {
+    clearToken();
+    window.dispatchEvent(new Event('auth:logout'));
+  }
   if (!res.ok) {
     const body = await res.text().catch(() => '');
     throw new Error(`API-fout ${res.status}: ${body}`);
