@@ -7,16 +7,32 @@ const ACCOUNT_ID = 1;
 
 export interface AccountView {
   clubId: string;
+  clubName: string | null;
   membershipNumber: string;
   hasPassword: boolean;
+  fullName: string | null;
+  onboardedAt: Date | null;
   updatedAt: Date;
+}
+
+/** Onboarding is compleet zodra onboardedAt gezet is, ongeacht wat er (bv.
+ * vanuit env-vars) al in de overige velden staat. */
+export interface CompleteOnboardingInput {
+  fullName: string;
+  clubId: string;
+  clubName: string;
+  membershipNumber: string;
+  password: string;
 }
 
 function toView(account: Account): AccountView {
   return {
     clubId: account.clubId,
+    clubName: account.clubName,
     membershipNumber: account.membershipNumber,
     hasPassword: account.password.length > 0,
+    fullName: account.fullName,
+    onboardedAt: account.onboardedAt,
     updatedAt: account.updatedAt,
   };
 }
@@ -75,6 +91,28 @@ export class AccountService {
     const account = await this.prisma.account.update({
       where: { id: ACCOUNT_ID },
       data,
+    });
+    return toView(account);
+  }
+
+  /**
+   * Rondt de onboarding af: slaat de geverifieerde KNLTB-gegevens op en zet
+   * onboardedAt. Wordt alleen aangeroepen nadat OnboardingService de
+   * inloggegevens al succesvol tegen de KNLTB-API heeft geverifieerd.
+   */
+  async completeOnboarding(
+    input: CompleteOnboardingInput,
+  ): Promise<AccountView> {
+    const account = await this.prisma.account.update({
+      where: { id: ACCOUNT_ID },
+      data: {
+        fullName: input.fullName,
+        clubId: input.clubId,
+        clubName: input.clubName,
+        membershipNumber: input.membershipNumber,
+        password: input.password,
+        onboardedAt: new Date(),
+      },
     });
     return toView(account);
   }
