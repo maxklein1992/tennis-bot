@@ -346,6 +346,52 @@
   color: var(--text);
 }
 
+/* Footer */
+.site-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 24px 0;
+  border-top: 1px solid var(--border-light);
+  color: var(--text);
+  font-size: 14px;
+}
+
+.footer-links {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.footer-links a {
+  text-decoration: none;
+  color: var(--text);
+  font-weight: 500;
+}
+
+.footer-links a:hover {
+  color: var(--text-h);
+}
+
+.footer-contact {
+  text-decoration: none;
+  color: var(--text);
+}
+
+.footer-contact:hover {
+  color: var(--text-h);
+}
+
+@media (max-width: 640px) {
+  .site-footer {
+    justify-content: center;
+    text-align: center;
+  }
+}
+
 .app-header-row {
   display: flex;
   align-items: center;
