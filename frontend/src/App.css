@@ -57,6 +57,12 @@
   color: var(--text-h);
 }
 
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 .nav-cta {
   text-decoration: none;
   font-weight: 600;
@@ -70,6 +76,40 @@
 
 .nav-cta:hover {
   background: var(--accent-hover);
+}
+
+/* Language switcher */
+.language-switcher {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-sm);
+}
+
+.language-switcher-option {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: none;
+  background: transparent;
+  color: var(--text);
+  font-weight: 500;
+  font-size: 13px;
+  padding: 6px 10px;
+  border-radius: calc(var(--radius-sm) - 2px);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.language-switcher-option:hover {
+  color: var(--text-h);
+}
+
+.language-switcher-option-active {
+  background: var(--accent-bg);
+  color: var(--accent);
 }
 
 .marketing-main {
@@ -107,6 +147,10 @@
 
 @media (max-width: 640px) {
   .nav-tabs {
+    display: none;
+  }
+
+  .language-switcher-option-label {
     display: none;
   }
 
