@@ -1,0 +1,8 @@
+node_modules/
+dist/
+.env
+logs/
+*.png
+.DS_Store
+backend/public/
+backend/prisma/migrations/dev-*/

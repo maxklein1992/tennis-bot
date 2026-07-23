@@ -1,0 +1,31 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: tennisbot
+      POSTGRES_USER: tennisbot
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+  app:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: postgresql://tennisbot:${POSTGRES_PASSWORD}@db:5432/tennisbot
+      KNLTB_CLUB_ID: ${KNLTB_CLUB_ID}
+      KNLTB_MEMBERSHIP_NUMBER: ${KNLTB_MEMBERSHIP_NUMBER}
+      KNLTB_PASSWORD: ${KNLTB_PASSWORD}
+      PARTNER_MEMBER_IDS: ${PARTNER_MEMBER_IDS}
+      TARGET_WEEKDAY: ${TARGET_WEEKDAY}
+      TARGET_TIME: ${TARGET_TIME}
+      COURT_PREFERENCE: ${COURT_PREFERENCE}
+      DURATION_MINUTES: ${DURATION_MINUTES}
+      BOOKING_WINDOW_DAYS: ${BOOKING_WINDOW_DAYS}
+      MOCK_KNLTB: ${MOCK_KNLTB:-false}
+    ports:
+      - '80:3000'
+volumes:
+  db-data:

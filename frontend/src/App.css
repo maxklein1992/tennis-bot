@@ -1,0 +1,471 @@
+.app {
+  text-align: left;
+  padding: 24px 0 64px;
+}
+
+.banner {
+  padding: 16px;
+  margin-bottom: 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--code-bg);
+}
+
+.banner-error {
+  color: var(--danger);
+  border-color: var(--danger);
+}
+
+/* Generic card */
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  padding: 24px;
+}
+
+.card-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.card-header-row h2 {
+  margin: 0;
+}
+
+/* Top row: overview + next-up */
+.top-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+@media (max-width: 640px) {
+  .top-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.overview-card {
+  display: flex;
+  gap: 32px;
+  align-items: center;
+}
+
+.overview-stat {
+  display: flex;
+  flex-direction: column;
+}
+
+.overview-value {
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--text-h);
+  line-height: 1.1;
+}
+
+.overview-label {
+  font-size: 14px;
+  color: var(--text);
+}
+
+.next-up-card .next-up-date {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-h);
+  margin-bottom: 4px;
+}
+
+.next-up-card .next-up-meta {
+  font-size: 14px;
+  color: var(--text);
+}
+
+/* Active reservations card */
+.active-reservations-card {
+  margin-bottom: 16px;
+}
+
+.primary-button {
+  font: inherit;
+  font-weight: 600;
+  padding: 10px 18px;
+  border-radius: var(--radius-sm);
+  border: none;
+  background: var(--accent);
+  color: white;
+  cursor: pointer;
+}
+
+.primary-button:hover {
+  background: var(--accent-hover);
+}
+
+.primary-button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* Schedule cards (nested inside active-reservations-card) */
+.schedule-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.schedule-card {
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: var(--card-bg);
+}
+
+.schedule-card-disabled {
+  opacity: 0.6;
+}
+
+.schedule-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.schedule-card-header h3 {
+  margin: 0;
+}
+
+.toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--text);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.toggle input {
+  accent-color: var(--accent);
+}
+
+.schedule-card-meta {
+  font-size: 14px;
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.schedule-card-next {
+  font-size: 14px;
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  background: var(--code-bg);
+  color: var(--text-h);
+}
+
+.schedule-card-history {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.emoji-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  font-size: 16px;
+}
+
+.muted {
+  font-size: 13px;
+  color: var(--text);
+}
+
+.schedule-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 4px;
+}
+
+.schedule-card-actions button {
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-h);
+  cursor: pointer;
+}
+
+.schedule-card-actions button:hover {
+  border-color: var(--text-h);
+}
+
+.schedule-card-actions button.danger-outline {
+  color: var(--danger);
+  border-color: var(--danger);
+}
+
+.schedule-card-actions button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 16px;
+}
+
+.modal {
+  background: var(--card-bg);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  max-width: 640px;
+  width: 100%;
+  max-height: 95vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  box-shadow: var(--shadow);
+  box-sizing: border-box;
+}
+
+.modal .form-row {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
+}
+
+.modal .form-row input,
+.modal .form-row select {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.modal .partner-picker {
+  width: 100%;
+  min-width: 0;
+}
+
+.modal h2 {
+  margin-top: 0;
+}
+
+.modal .settings-form {
+  border: none;
+  padding: 0;
+  margin-bottom: 0;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.modal-actions button {
+  font: inherit;
+  font-weight: 600;
+  padding: 10px 18px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.modal-actions button[type='submit'] {
+  border: none;
+  background: var(--accent);
+  color: white;
+}
+
+.modal-actions button[type='submit']:hover {
+  background: var(--accent-hover);
+}
+
+.modal-actions button[type='button'] {
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-h);
+}
+
+/* Account card */
+.account-card {
+  margin-bottom: 16px;
+}
+
+.account-form-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Shared form styles (used by settings-form / modal / account-form) */
+.settings-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.form-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.form-row label {
+  font-size: 15px;
+  color: var(--text);
+}
+
+.form-row input,
+.form-row select {
+  font: inherit;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-h);
+  min-width: 220px;
+}
+
+.form-row input:focus,
+.form-row select:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: -1px;
+}
+
+.form-row-start {
+  align-items: flex-start;
+}
+
+.partner-picker {
+  position: relative;
+  min-width: 220px;
+}
+
+.partner-picker input {
+  font: inherit;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-h);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.partner-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.partner-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--accent-bg);
+  color: var(--accent);
+  font-size: 14px;
+}
+
+.partner-chip button {
+  border: none;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+  padding: 0;
+}
+
+.partner-results {
+  position: absolute;
+  z-index: 10;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin: 4px 0 0;
+  padding: 4px;
+  list-style: none;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow);
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.partner-results li button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 8px 10px;
+  border: none;
+  background: none;
+  color: var(--text-h);
+  font: inherit;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+.partner-results li button:hover {
+  background: var(--accent-bg);
+}
+
+.settings-form button[type='submit'] {
+  align-self: flex-start;
+  font: inherit;
+  font-weight: 600;
+  padding: 10px 20px;
+  border-radius: var(--radius-sm);
+  border: none;
+  background: var(--accent);
+  color: white;
+  cursor: pointer;
+}
+
+.settings-form button[type='submit']:hover {
+  background: var(--accent-hover);
+}
+
+.settings-form button[type='submit']:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.form-message {
+  margin: 0;
+  font-size: 14px;
+}
+
+.form-success {
+  color: var(--success);
+}
+
+.form-error {
+  color: var(--danger);
+}

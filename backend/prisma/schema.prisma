@@ -1,0 +1,83 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Weekday {
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+  SATURDAY
+  SUNDAY
+}
+
+enum AttemptStatus {
+  SUCCESS
+  VALIDATION_FAILED
+  NO_SLOT_FOUND
+  BOOKING_FAILED
+  ERROR
+}
+
+enum TriggerType {
+  SCHEDULED
+  MANUAL
+}
+
+/// Singleton rij (id altijd 1): alleen de KNLTB-inloggegevens. Meerdere
+/// wekelijkse reserveringen delen hetzelfde account, vandaar apart van
+/// BookingSchedule.
+model Account {
+  id               Int      @id @default(1)
+  clubId           String
+  membershipNumber String
+  password         String
+  updatedAt        DateTime @updatedAt
+}
+
+/// Eén wekelijkse terugkerende reservering. Meerdere rijen mogelijk (bv.
+/// vrijdagochtend met Henk, zondagavond met Conny).
+model BookingSchedule {
+  id                 String           @id @default(uuid())
+  label              String?
+  partnerMemberIds   String[]         @default([])
+  /// Weergavenamen, zelfde volgorde/index als partnerMemberIds (denormalized
+  /// voor het dashboard, zodat je geen live KNLTB-lookup nodig hebt om
+  /// bestaande medespelers te tonen).
+  partnerMemberNames String[]         @default([])
+  targetWeekday      Weekday          @default(MONDAY)
+  targetTime         String           @default("19:00")
+  courtPreference    String[]         @default([])
+  durationMinutes    Int              @default(60)
+  enabled            Boolean          @default(true)
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+  attempts           BookingAttempt[]
+}
+
+model BookingAttempt {
+  id                 String          @id @default(uuid())
+  scheduleId         String
+  schedule           BookingSchedule @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
+  createdAt          DateTime        @default(now())
+  trigger            TriggerType     @default(SCHEDULED)
+  dryRun             Boolean         @default(false)
+  targetStart        DateTime
+  targetEnd          DateTime
+  status             AttemptStatus
+  courtId            String?
+  courtName          String?
+  validationResponse Json?
+  reservationId      String?
+  errorMessage       String?
+  rawResult          Json?
+  durationMs         Int?
+
+  @@index([scheduleId, createdAt])
+}
