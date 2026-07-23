@@ -10,5 +10,6 @@ export interface NavTab {
  */
 export const NAV_TABS: NavTab[] = [
   { path: '/hoe-werkt-het', label: 'Hoe werkt het' },
+  { path: '/over-ons', label: 'Over ons' },
   { path: '/contact', label: 'Contact' },
 ];
