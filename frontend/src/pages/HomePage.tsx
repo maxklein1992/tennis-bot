@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Logo } from '../components/Logo';
+import { HowItWorksSection } from '../components/HowItWorksSection';
 import { FaqSection } from '../components/FaqSection';
 
 export function HomePage() {
@@ -16,6 +17,7 @@ export function HomePage() {
           Naar dashboard
         </Link>
       </div>
+      <HowItWorksSection />
       <FaqSection />
     </>
   );
