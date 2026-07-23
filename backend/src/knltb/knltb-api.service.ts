@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { IKnltbApiService } from './knltb-api.interface';
 import {
+  ClubSearchResult,
   CourtAvailability,
   CreateReservationResult,
   KnltbCredentials,
@@ -40,6 +41,27 @@ export class KnltbApiService implements IKnltbApiService {
     };
     if (token) headers['x-lisa-auth-token'] = token;
     return headers;
+  }
+
+  /**
+   * LET OP: dit endpoint is niet teruggezien in het gereverse-engineerde
+   * netwerkverkeer (dat begint altijd al bij een bekende clubId) en is dus
+   * een aanname naar analogie van `searchMembers` — controleer/pas aan zodra
+   * er echt verkeer van de "vereniging zoeken"-flow in de ClubApp is
+   * meegekeken. Vereist geen auth-token, alleen de app-brede Basic-auth.
+   */
+  async searchClubs(namePattern: string): Promise<ClubSearchResult[]> {
+    const url = `${API_BASE}/clubs?name_pattern=${encodeURIComponent(namePattern)}&page_number=1&page_size=25`;
+    const res = await fetch(url, { headers: this.headers() });
+    if (!res.ok) {
+      throw new Error(`Kon verenigingen niet doorzoeken: HTTP ${res.status}`);
+    }
+    const data = (await res.json()) as {
+      clubs: Array<{ id: string; name: string }>;
+    };
+    return data.clubs
+      .map((c) => ({ id: c.id, name: c.name }))
+      .filter((c) => c.id);
   }
 
   async login(credentials: KnltbCredentials): Promise<LoginResult> {
