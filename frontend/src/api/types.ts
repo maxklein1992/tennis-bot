@@ -69,3 +69,17 @@ export interface RunNowResult {
   message: string;
   attemptId: string;
 }
+
+export interface AuthUser {
+  id: string;
+  email: string;
+}
+
+export interface AuthResult {
+  accessToken: string;
+  user: AuthUser;
+}
+
+export interface AuthStatus {
+  registrationAvailable: boolean;
+}

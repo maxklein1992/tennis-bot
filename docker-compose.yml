@@ -25,6 +25,7 @@ services:
       DURATION_MINUTES: ${DURATION_MINUTES}
       BOOKING_WINDOW_DAYS: ${BOOKING_WINDOW_DAYS}
       MOCK_KNLTB: ${MOCK_KNLTB:-false}
+      JWT_SECRET: ${JWT_SECRET}
     ports:
       - '80:3000'
 volumes:

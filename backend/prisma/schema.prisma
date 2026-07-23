@@ -30,6 +30,15 @@ enum TriggerType {
   MANUAL
 }
 
+/// Dashboard-gebruiker (inloggen op het dashboard zelf). Los van Account,
+/// dat de KNLTB-inloggegevens bevat.
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+}
+
 /// Singleton rij (id altijd 1): alleen de KNLTB-inloggegevens. Meerdere
 /// wekelijkse reserveringen delen hetzelfde account, vandaar apart van
 /// BookingSchedule.
