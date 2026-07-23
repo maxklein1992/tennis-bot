@@ -1,6 +1,7 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { MarketingLayout } from './layouts/MarketingLayout';
 import { HomePage } from './pages/HomePage';
+import { ContactPage } from './pages/ContactPage';
 import { DashboardPage } from './pages/DashboardPage';
 import './App.css';
 
@@ -10,6 +11,7 @@ function App() {
       <Routes>
         <Route element={<MarketingLayout />}>
           <Route path="/" element={<HomePage />} />
+          <Route path="/contact" element={<ContactPage />} />
         </Route>
         <Route path="/dashboard" element={<DashboardPage />} />
       </Routes>
