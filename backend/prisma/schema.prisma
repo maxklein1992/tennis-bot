@@ -43,11 +43,21 @@ model User {
 /// wekelijkse reserveringen delen hetzelfde account, vandaar apart van
 /// BookingSchedule.
 model Account {
-  id               Int      @id @default(1)
+  id               Int       @id @default(1)
   clubId           String
+  /// Weergavenaam van de vereniging bij clubId (denormalized, opgezocht via
+  /// de verenigingszoekfunctie tijdens onboarding — zelfde patroon als
+  /// BookingSchedule.partnerMemberNames).
+  clubName         String?
   membershipNumber String
   password         String
-  updatedAt        DateTime @updatedAt
+  /// Volledige naam van de gebruiker, ingevuld tijdens onboarding.
+  fullName         String?
+  /// Gezet zodra de onboarding is voltooid (incl. succesvolle KNLTB-verificatie).
+  /// Null = onboarding nog niet doorlopen, ongeacht wat er in de overige
+  /// velden staat (die kunnen al geseed zijn vanuit env-vars).
+  onboardedAt      DateTime?
+  updatedAt        DateTime  @updatedAt
 }
 
 /// Eén wekelijkse terugkerende reservering. Meerdere rijen mogelijk (bv.
