@@ -3,6 +3,70 @@
   padding: 24px 0 64px;
 }
 
+.app-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.app-header-row h1 {
+  margin: 0;
+}
+
+.logout-button {
+  font: inherit;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-h);
+  cursor: pointer;
+}
+
+.logout-button:hover {
+  border-color: var(--text-h);
+}
+
+.auth-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 380px;
+}
+
+.auth-card h1 {
+  font-size: 22px;
+  margin-bottom: 4px;
+}
+
+.auth-card h2 {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text);
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+
+.auth-card .form-row {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
+}
+
+.auth-card .form-row input {
+  width: 100%;
+  box-sizing: border-box;
+}
+
 .banner {
   padding: 16px;
   margin-bottom: 16px;
