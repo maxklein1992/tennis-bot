@@ -1,5 +1,7 @@
 import type {
   Account,
+  Club,
+  OnboardingInput,
   Partner,
   RunNowResult,
   Schedule,
@@ -20,8 +22,15 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
     window.dispatchEvent(new Event('auth:logout'));
   }
   if (!res.ok) {
-    const body = await res.text().catch(() => '');
-    throw new Error(`API-fout ${res.status}: ${body}`);
+    const body: unknown = await res.json().catch(() => null);
+    const rawMessage =
+      body && typeof body === 'object' && 'message' in body
+        ? (body as { message: unknown }).message
+        : null;
+    const message = Array.isArray(rawMessage)
+      ? rawMessage.join(', ')
+      : (rawMessage ?? `API-fout ${res.status}`);
+    throw new Error(String(message));
   }
   return res.json() as Promise<T>;
 }
@@ -79,4 +88,15 @@ export function updateAccount(input: UpdateAccountInput): Promise<Account> {
 
 export function searchMembers(q: string): Promise<Partner[]> {
   return request<Partner[]>(`/members/search?q=${encodeURIComponent(q)}`);
+}
+
+export function searchClubs(q: string): Promise<Club[]> {
+  return request<Club[]>(`/clubs/search?q=${encodeURIComponent(q)}`);
+}
+
+export function submitOnboarding(input: OnboardingInput): Promise<Account> {
+  return request<Account>('/onboarding', {
+    method: 'POST',
+    body: JSON.stringify(input),
+  });
 }

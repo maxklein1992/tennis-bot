@@ -966,3 +966,88 @@
 .form-error {
   color: var(--danger);
 }
+
+/* Onboarding (na registratie, vóór het dashboard) */
+.onboarding-card {
+  width: 100%;
+  max-width: 460px;
+}
+
+.onboarding-card h1 {
+  font-size: 22px;
+  margin: 0 0 4px;
+}
+
+.onboarding-card .onboarding-intro {
+  margin-bottom: 20px;
+}
+
+.onboarding-card .form-row {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
+}
+
+.onboarding-card .form-row input {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.club-picker {
+  position: relative;
+}
+
+.club-picker input {
+  font: inherit;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-h);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.club-picker-selected {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--accent-bg);
+  color: var(--text-h);
+}
+
+.club-picker-selected button {
+  border: none;
+  background: none;
+  color: var(--accent);
+  cursor: pointer;
+  font: inherit;
+  font-weight: 600;
+  padding: 0;
+}
+
+/* Toast: tijdelijke melding rechtsonder */
+.toast {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 100;
+  padding: 14px 20px;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow);
+  font-weight: 500;
+  color: white;
+  max-width: 360px;
+}
+
+.toast-success {
+  background: var(--success);
+}
+
+.toast-error {
+  background: var(--danger);
+}
