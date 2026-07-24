@@ -10,9 +10,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "i18next": "^26.3.6",
     "luxon": "^3.7.2",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
+    "react-i18next": "^17.0.11",
     "react-router-dom": "^7.18.1"
   },
   "devDependencies": {

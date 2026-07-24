@@ -27,8 +27,8 @@ const FAKE_CLUBS: ClubSearchResult[] = [
   { id: 'e1a2b3c4-5d6e-4f70-8081-92a3b4c5d6e7', name: 'TC De Fake Aas' },
 ];
 
-/** Sentinel-wachtwoord om een KNLTB-inlogfout te simuleren in fake-modus. */
-export const FAKE_LOGIN_FAILURE_PASSWORD = 'FAKE_SENTINEL_INVALID_CREDENTIALS';
+/** Sentinelwaarde om een KNLTB-inlogfout te simuleren in fake-modus (geen echt wachtwoord). */
+export const FAKE_LOGIN_FAILURE_SENTINEL = 'FAKE_SENTINEL_INVALID_CREDENTIALS';
 
 /**
  * In-memory stub voor lokaal/e2e-testen zonder de echte KNLTB-API te raken.
@@ -36,7 +36,7 @@ export const FAKE_LOGIN_FAILURE_PASSWORD = 'FAKE_SENTINEL_INVALID_CREDENTIALS';
  * één vrije baan op precies het gevraagde tijdstip, en laat validate/create
  * altijd slagen — handig om de volledige pipeline (scheduler-lus, Prisma-writes,
  * dashboard) te testen zonder het echte account of de 240-minuten-limiet te raken.
- * `login()` slaagt ook altijd, behalve met FAKE_LOGIN_FAILURE_PASSWORD (voor
+ * `login()` slaagt ook altijd, behalve met FAKE_LOGIN_FAILURE_SENTINEL (voor
  * het testen van de foutafhandeling in de onboarding-flow).
  */
 @Injectable()
@@ -52,10 +52,10 @@ export class FakeKnltbApiService implements IKnltbApiService {
   async login(credentials: KnltbCredentials): Promise<LoginResult> {
     this.logger.log('[FAKE] Inloggen bij KNLTB API');
     // Om de foutafhandeling van de onboarding-flow te kunnen testen zonder
-    // een echte KNLTB-verbinding: dit sentinel-wachtwoord simuleert een
+    // een echte KNLTB-verbinding: deze sentinelwaarde simuleert een
     // afgewezen login, alle andere wachtwoorden slagen altijd (zie ook
     // class-docstring hierboven).
-    if (credentials.password === FAKE_LOGIN_FAILURE_PASSWORD) {
+    if (credentials.password === FAKE_LOGIN_FAILURE_SENTINEL) {
       throw new Error('Inloggen mislukt: status=invalid_credentials (fake)');
     }
     return { token: 'fake-token', memberId: 'fake-member-id' };
