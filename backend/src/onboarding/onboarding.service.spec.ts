@@ -4,13 +4,16 @@ import { AccountService } from '../account/account.service';
 import type { IKnltbApiService } from '../knltb/knltb-api.interface';
 import { SubmitOnboardingDto } from './dto/submit-onboarding.dto';
 
+/** Placeholder testwaarde, geen echt wachtwoord. */
+const TEST_FIXTURE_KNLTB_PASSWORD = 'not-a-real-credential-test-fixture';
+
 describe('OnboardingService', () => {
   const dto: SubmitOnboardingDto = Object.assign(new SubmitOnboardingDto(), {
     fullName: 'Henk Klein',
     clubId: 'club-1',
     clubName: 'TV De Fake Smash',
     membershipNumber: '123456',
-    password: 'not-a-real-credential-test-fixture',
+    password: TEST_FIXTURE_KNLTB_PASSWORD,
   });
 
   function build(knltbOverrides: Partial<IKnltbApiService> = {}) {
