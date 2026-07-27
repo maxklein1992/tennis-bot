@@ -441,11 +441,22 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  margin-bottom: 8px;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border-light);
 }
 
-.app-header-row h1 {
+.app-header-brand {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.app-header-brand h1 {
   margin: 0;
+  padding-left: 16px;
+  border-left: 1px solid var(--border-light);
+  font-size: 20px;
 }
 
 .logout-button {
@@ -463,22 +474,41 @@
   border-color: var(--text-h);
 }
 
+/* Full-bleed accent-tinted background for the login/onboarding pages,
+   using the same width:100vw trick as .hero so it reaches past the
+   #root max-width column. */
 .auth-page {
+  position: relative;
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 24px;
+  background:
+    radial-gradient(circle at 50% 0%, var(--accent-bg), transparent 55%),
+    var(--bg);
+}
+
+/* Use .card compound selector so this wins over .card's border shorthand,
+   which appears later in this file. */
+.card.auth-card,
+.card.onboarding-card {
+  border-top: 3px solid var(--accent);
+}
+
+.auth-card-brand,
+.onboarding-card-brand {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
 }
 
 .auth-card {
   width: 100%;
   max-width: 380px;
-}
-
-.auth-card h1 {
-  font-size: 22px;
-  margin-bottom: 4px;
 }
 
 .auth-card h2 {
@@ -487,6 +517,7 @@
   color: var(--text);
   margin-top: 0;
   margin-bottom: 20px;
+  text-align: center;
 }
 
 .auth-card .form-row {

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { getAccount, getSchedules } from '../api/client';
 import { clearToken, getMe, getToken, setToken } from '../api/auth';
 import type { Account, AuthUser, Schedule } from '../api/types';
@@ -9,6 +10,7 @@ import { ScheduleModal } from '../components/ScheduleModal';
 import { AccountForm } from '../components/AccountForm';
 import { AuthPage } from '../components/AuthPage';
 import { OnboardingPage } from './OnboardingPage';
+import { Logo } from '../components/Logo';
 import { Toast } from '../components/Toast';
 import type { ToastMessage } from '../components/Toast';
 
@@ -84,7 +86,12 @@ export function DashboardPage() {
   return (
     <div className="app">
       <div className="app-header-row">
-        <h1>ReserveringBot dashboard</h1>
+        <div className="app-header-brand">
+          <Link to="/" className="nav-logo-link">
+            <Logo />
+          </Link>
+          <h1>Dashboard</h1>
+        </div>
         <button className="logout-button" onClick={handleLogout}>
           Uitloggen
         </button>

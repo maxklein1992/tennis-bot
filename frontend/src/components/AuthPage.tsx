@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { getAuthStatus, login, register } from '../api/auth';
 import type { AuthUser } from '../api/types';
 import { Card } from './Card';
+import { Logo } from './Logo';
 
 export function AuthPage({
   onAuthenticated,
@@ -39,7 +40,9 @@ export function AuthPage({
   return (
     <div className="auth-page">
       <Card className="auth-card">
-        <h1>ReserveringBot dashboard</h1>
+        <div className="auth-card-brand">
+          <Logo size={40} />
+        </div>
         <h2>{mode === 'register' ? 'Account aanmaken' : 'Inloggen'}</h2>
         <form className="settings-form" onSubmit={handleSubmit}>
           <div className="form-row">
