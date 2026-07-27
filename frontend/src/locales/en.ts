@@ -16,21 +16,21 @@ export const en = {
     contact: 'Contact',
   },
   home: {
-    heroTitle: 'Automatically book your tennis court',
+    heroTitle: 'Automatically book your court',
     heroSubtitle:
-      'Tennis-bot automatically books your regular court at the KNLTB every week, the moment it ' +
+      'ReserveringBot automatically books your regular court at the KNLTB every week, the moment it ' +
       'becomes available — without you having to keep watching for it yourself.',
     heroCta: 'Go to dashboard',
   },
   howItWorksSection: {
     heading: 'How it works',
     intro:
-      'In four simple steps, tennis-bot arranges your regular court, without you having to wait ' +
+      'In four simple steps, ReserveringBot arranges your regular court, without you having to wait ' +
       'or click yourself.',
     steps: [
       {
         title: 'Sign up',
-        description: 'Create a free tennis-bot account in a couple of minutes.',
+        description: 'Create a free ReserveringBot account in a couple of minutes.',
       },
       {
         title: 'Enter your KNLTB details',
@@ -42,7 +42,7 @@ export const en = {
       },
       {
         title: 'The bot books automatically',
-        description: 'As soon as the court becomes available, tennis-bot books it for you automatically.',
+        description: 'As soon as the court becomes available, ReserveringBot books it for you automatically.',
       },
     ],
   },
@@ -50,23 +50,23 @@ export const en = {
     title: 'Frequently asked questions',
     items: [
       {
-        question: 'How exactly does tennis-bot work?',
+        question: 'How exactly does ReserveringBot work?',
         answer:
           'You set up a fixed schedule: a day, time, and court you want to play every week. As soon ' +
-          'as the KNLTB court planning opens for that date, tennis-bot immediately tries to book the ' +
+          'as the KNLTB court planning opens for that date, ReserveringBot immediately tries to book the ' +
           'desired court on your behalf, without you having to keep waiting for it yourself.',
       },
       {
         question: 'How often does it try to book?',
         answer:
-          'For each schedule, tennis-bot makes one booking attempt, at the time you configured for ' +
+          'For each schedule, ReserveringBot makes one booking attempt, at the time you configured for ' +
           'when the court becomes available. If the booking succeeds, you\'ll see it right away in your dashboard.',
       },
       {
         question: 'What happens if no court is available?',
         answer:
           'If the desired court is already taken at that moment, the attempt fails gracefully and you ' +
-          'receive a notification in your dashboard. Tennis-bot does not pick an alternative court or time; ' +
+          'receive a notification in your dashboard. ReserveringBot does not pick an alternative court or time; ' +
           'your schedule simply stays active for the following week.',
       },
       {
@@ -88,7 +88,7 @@ export const en = {
   contact: {
     title: 'Contact',
     subtitle:
-      'Tennis-bot is a one-person hobby project — no support team, no queue. Got a question, found ' +
+      'ReserveringBot is a one-person hobby project — no support team, no queue. Got a question, found ' +
       'a bug, or have an idea for a new feature? Feel free to email me, I usually reply quickly.',
     mailButton: 'Email us: {{email}}',
   },
@@ -108,21 +108,21 @@ export const en = {
       'previous one went.',
   },
   howItWorksPage: {
-    title: 'How tennis-bot works',
+    title: 'How ReserveringBot works',
     intro:
-      'Tennis-bot takes the weekly puzzle of court bookings off your hands. Below you can read ' +
+      'ReserveringBot takes the weekly puzzle of court bookings off your hands. Below you can read ' +
       'exactly what happens, from registration to a booked court.',
     steps: [
       {
         title: '1. Sign up',
         description:
           'Create a free account with your email address and a password. You use this account to ' +
-          'log in to your tennis-bot dashboard, separate from your KNLTB account.',
+          'log in to your ReserveringBot dashboard, separate from your KNLTB account.',
       },
       {
         title: '2. Enter your KNLTB details',
         description:
-          'Fill in your KNLTB login details so tennis-bot can log in to your club\'s booking module ' +
+          'Fill in your KNLTB login details so ReserveringBot can log in to your club\'s booking module ' +
           'on your behalf. Your details are stored securely and only used to make court bookings — ' +
           'never for anything else.',
       },
@@ -137,7 +137,7 @@ export const en = {
         title: '4. The bot books automatically',
         description:
           'As soon as the court becomes available according to the KNLTB booking system (usually a ' +
-          'few days in advance), tennis-bot tries to book it right away. If the booking doesn\'t succeed ' +
+          'few days in advance), ReserveringBot tries to book it right away. If the booking doesn\'t succeed ' +
           'the first time — for example due to a temporary glitch or high traffic on the platform — the ' +
           'bot automatically retries, at short intervals, until the booking succeeds or the booking ' +
           'window closes.',
@@ -148,7 +148,7 @@ export const en = {
       a1:
         'Should a booking unexpectedly fail (for example because the court turns out to be taken ' +
         'after all, or the KNLTB website is temporarily unreachable), you\'ll see this right away in ' +
-        'your dashboard, including the reason. Tennis-bot keeps trying as long as the booking window is open.',
+        'your dashboard, including the reason. ReserveringBot keeps trying as long as the booking window is open.',
       q2: 'How quickly is a booking made?',
       a2:
         'The bot continuously checks whether your court has opened up for booking and acts within ' +

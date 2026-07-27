@@ -71,7 +71,7 @@ export function DashboardPage() {
 
   function handleOnboardingComplete(updatedAccount: Account) {
     setAccount(updatedAccount);
-    setToast({ kind: 'success', text: 'KNLTB-gegevens geverifieerd. Welkom bij tennis-bot!' });
+    setToast({ kind: 'success', text: 'KNLTB-gegevens geverifieerd. Welkom bij ReserveringBot!' });
   }
 
   if (user === 'checking') return null;
@@ -84,7 +84,7 @@ export function DashboardPage() {
   return (
     <div className="app">
       <div className="app-header-row">
-        <h1>Tennis-bot dashboard</h1>
+        <h1>ReserveringBot dashboard</h1>
         <button className="logout-button" onClick={handleLogout}>
           Uitloggen
         </button>

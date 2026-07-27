@@ -39,7 +39,7 @@ export function AuthPage({
   return (
     <div className="auth-page">
       <Card className="auth-card">
-        <h1>Tennis-bot dashboard</h1>
+        <h1>ReserveringBot dashboard</h1>
         <h2>{mode === 'register' ? 'Account aanmaken' : 'Inloggen'}</h2>
         <form className="settings-form" onSubmit={handleSubmit}>
           <div className="form-row">

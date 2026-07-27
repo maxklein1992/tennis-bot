@@ -49,7 +49,7 @@ export function OnboardingPage({
   return (
     <div className="auth-page">
       <Card className="onboarding-card">
-        <h1>Welkom bij tennis-bot</h1>
+        <h1>Welkom bij ReserveringBot</h1>
         <p className="onboarding-intro">
           Voordat je naar het dashboard gaat, hebben we nog een paar gegevens nodig.
         </p>

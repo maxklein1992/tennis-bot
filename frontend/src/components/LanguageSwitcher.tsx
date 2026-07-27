@@ -11,21 +11,17 @@ export function LanguageSwitcher() {
   const activeLanguage = i18n.language === 'en' ? 'en' : 'nl';
 
   return (
-    <div className="language-switcher" role="group" aria-label="Taal / Language">
+    <select
+      className="language-switcher"
+      aria-label="Taal / Language"
+      value={activeLanguage}
+      onChange={(e) => setLanguage(e.target.value as Language)}
+    >
       {LANGUAGE_OPTIONS.map((option) => (
-        <button
-          key={option.code}
-          type="button"
-          className={`language-switcher-option${
-            activeLanguage === option.code ? ' language-switcher-option-active' : ''
-          }`}
-          aria-pressed={activeLanguage === option.code}
-          onClick={() => setLanguage(option.code)}
-        >
-          <span aria-hidden="true">{option.flag}</span>
-          <span className="language-switcher-option-label">{t(`languageSwitcher.${option.code}`)}</span>
-        </button>
+        <option key={option.code} value={option.code}>
+          {option.flag} {t(`languageSwitcher.${option.code}`)}
+        </option>
       ))}
-    </div>
+    </select>
   );
 }

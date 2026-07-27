@@ -15,21 +15,21 @@ export const nl = {
     contact: 'Contact',
   },
   home: {
-    heroTitle: 'Automatisch je tennisbaan reserveren',
+    heroTitle: 'Automatisch je baan reserveren',
     heroSubtitle:
-      'Tennis-bot boekt elke week automatisch je vaste baan bij de KNLTB, zodra deze ' +
+      'ReserveringBot boekt elke week automatisch je vaste baan bij de KNLTB, zodra deze ' +
       'beschikbaar komt — zonder dat je er zelf achteraan hoeft te zitten.',
     heroCta: 'Naar dashboard',
   },
   howItWorksSection: {
     heading: 'Hoe werkt het',
     intro:
-      'In vier eenvoudige stappen regelt tennis-bot je vaste baan, zonder dat je zelf ' +
+      'In vier eenvoudige stappen regelt ReserveringBot je vaste baan, zonder dat je zelf ' +
       'hoeft te wachten of te klikken.',
     steps: [
       {
         title: 'Registreren',
-        description: 'Maak in een paar minuten een gratis account aan bij tennis-bot.',
+        description: 'Maak in een paar minuten een gratis account aan bij ReserveringBot.',
       },
       {
         title: 'KNLTB-gegevens invullen',
@@ -41,7 +41,7 @@ export const nl = {
       },
       {
         title: 'Bot boekt automatisch',
-        description: 'Zodra de baan vrijkomt, boekt tennis-bot deze automatisch voor je.',
+        description: 'Zodra de baan vrijkomt, boekt ReserveringBot deze automatisch voor je.',
       },
     ],
   },
@@ -49,23 +49,23 @@ export const nl = {
     title: 'Veelgestelde vragen',
     items: [
       {
-        question: 'Hoe werkt tennis-bot precies?',
+        question: 'Hoe werkt ReserveringBot precies?',
         answer:
           'Je stelt een vast schema in: een dag, tijdstip en baan die je wekelijks wilt bespelen. ' +
-          'Zodra de KNLTB-baanplanning voor die datum opent, probeert tennis-bot direct namens jou de ' +
+          'Zodra de KNLTB-baanplanning voor die datum opent, probeert ReserveringBot direct namens jou de ' +
           'gewenste baan te reserveren, zonder dat jij erachter hoeft te blijven wachten.',
       },
       {
         question: 'Hoe vaak wordt er geprobeerd te boeken?',
         answer:
-          'Voor elk schema doet tennis-bot één boekingspoging, op het door jou ingestelde tijdstip ' +
+          'Voor elk schema doet ReserveringBot één boekingspoging, op het door jou ingestelde tijdstip ' +
           'waarop de baan beschikbaar komt. Lukt de reservering, dan zie je dit direct terug in je dashboard.',
       },
       {
         question: 'Wat gebeurt er als er geen baan beschikbaar is?',
         answer:
           'Als de gewenste baan op dat moment al bezet is, faalt de poging netjes en ontvang je hiervan ' +
-          'een melding in je dashboard. Tennis-bot verzint geen alternatieve baan of tijd; je schema blijft ' +
+          'een melding in je dashboard. ReserveringBot verzint geen alternatieve baan of tijd; je schema blijft ' +
           'gewoon actief voor de week erna.',
       },
       {
@@ -87,7 +87,7 @@ export const nl = {
   contact: {
     title: 'Contact',
     subtitle:
-      'Tennis-bot is een hobbyproject van één persoon — geen supportteam, geen ' +
+      'ReserveringBot is een hobbyproject van één persoon — geen supportteam, geen ' +
       'wachtrij. Heb je een vraag, een bug gevonden of een idee voor een nieuwe functie? Mail ' +
       'gerust, ik reageer meestal snel.',
     mailButton: 'Mail ons: {{email}}',
@@ -110,21 +110,21 @@ export const nl = {
       'hoe het de vorige keer is gegaan.',
   },
   howItWorksPage: {
-    title: 'Hoe werkt tennis-bot',
+    title: 'Hoe werkt ReserveringBot',
     intro:
-      'Tennis-bot neemt het wekelijkse gepuzzel met baanreserveringen uit handen. Hieronder lees ' +
+      'ReserveringBot neemt het wekelijkse gepuzzel met baanreserveringen uit handen. Hieronder lees ' +
       'je precies wat er gebeurt, van registratie tot geboekte baan.',
     steps: [
       {
         title: '1. Registreren',
         description:
           'Maak een gratis account aan met je e-mailadres en een wachtwoord. Dit account gebruik je ' +
-          'om in te loggen op je tennis-bot dashboard, los van je KNLTB-account.',
+          'om in te loggen op je ReserveringBot dashboard, los van je KNLTB-account.',
       },
       {
         title: '2. KNLTB-gegevens invullen',
         description:
-          'Vul je KNLTB-inloggegevens in zodat tennis-bot namens jou kan inloggen bij de reserveringsmodule ' +
+          'Vul je KNLTB-inloggegevens in zodat ReserveringBot namens jou kan inloggen bij de reserveringsmodule ' +
           'van jouw vereniging. Je gegevens worden veilig opgeslagen en alleen gebruikt om baanreserveringen ' +
           'te plaatsen — nooit voor iets anders.',
       },
@@ -138,7 +138,7 @@ export const nl = {
         title: '4. Bot boekt automatisch',
         description:
           'Zodra de baan volgens het KNLTB-boekingssysteem vrijkomt (meestal enkele dagen van tevoren), probeert ' +
-          'tennis-bot direct te boeken. Lukt het boeken niet in één keer — bijvoorbeeld door een tijdelijke storing ' +
+          'ReserveringBot direct te boeken. Lukt het boeken niet in één keer — bijvoorbeeld door een tijdelijke storing ' +
           'of drukte op het platform — dan probeert de bot het automatisch opnieuw, met kleine tussenpozen, totdat ' +
           'de boeking lukt of het boekingsvenster sluit.',
       },
@@ -148,7 +148,7 @@ export const nl = {
       a1:
         'Mocht een boeking onverhoopt mislukken (bijvoorbeeld omdat de baan toch al bezet blijkt, ' +
         'of de KNLTB-website tijdelijk niet bereikbaar is), dan zie je dit direct terug in je ' +
-        'dashboard, inclusief de reden. Tennis-bot blijft het proberen zolang het boekingsvenster ' +
+        'dashboard, inclusief de reden. ReserveringBot blijft het proberen zolang het boekingsvenster ' +
         'open staat.',
       q2: 'Hoe snel wordt er geboekt?',
       a2:
