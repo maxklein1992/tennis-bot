@@ -3,6 +3,7 @@ import { submitOnboarding } from '../api/client';
 import type { Account, Club } from '../api/types';
 import { Card } from '../components/Card';
 import { ClubPicker } from '../components/ClubPicker';
+import { Logo } from '../components/Logo';
 
 /**
  * Onboardingpagina (issues #3, #4, #11): verplichte stap direct na
@@ -49,6 +50,9 @@ export function OnboardingPage({
   return (
     <div className="auth-page">
       <Card className="onboarding-card">
+        <div className="onboarding-card-brand">
+          <Logo size={40} />
+        </div>
         <h1>Welkom bij ReserveringBot</h1>
         <p className="onboarding-intro">
           Voordat je naar het dashboard gaat, hebben we nog een paar gegevens nodig.
