@@ -95,7 +95,7 @@ export const nl = {
   about: {
     title: 'Over deze bot',
     paragraph1:
-      'Bij onze tennisclub gaan vaste banen precies 7 dagen van tevoren open — en ze ' +
+      'Bij onze tennisclub gaan vaste banen een vast aantal dagen van tevoren open — en ze ' +
       'zijn binnen enkele minuten volgeboekt. Zelf op het juiste moment inloggen en op ' +
       '"boeken" klikken bleek in de praktijk niet vol te houden, dus is deze bot ' +
       'ontstaan: hij checkt automatisch of de baan vrijkomt en boekt hem meteen, elke week ' +
