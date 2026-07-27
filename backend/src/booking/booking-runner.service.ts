@@ -10,6 +10,7 @@ import { TIMEZONE } from './target-time.util';
 
 const RETRY_WINDOW_MS = 20_000;
 const RETRY_INTERVAL_MS = 500;
+const DEFAULT_BOOKING_WINDOW_DAYS = 7;
 
 export interface BookingRunResult {
   status: AttemptStatus;
@@ -41,10 +42,15 @@ export class BookingRunnerService {
       password: account.password,
     };
 
+    const parsedWindowDays = parseInt(process.env.BOOKING_WINDOW_DAYS ?? '', 10);
+    const bookingWindowDays = Number.isNaN(parsedWindowDays)
+      ? DEFAULT_BOOKING_WINDOW_DAYS
+      : parsedWindowDays;
+
     const [hour, minute] = schedule.targetTime.split(':').map(Number);
     const targetStart = DateTime.now()
       .setZone(TIMEZONE)
-      .plus({ days: 7 })
+      .plus({ days: bookingWindowDays })
       .set({ hour, minute, second: 0, millisecond: 0 });
     const targetEnd = targetStart.plus({ minutes: schedule.durationMinutes });
 

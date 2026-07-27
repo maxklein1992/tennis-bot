@@ -95,7 +95,7 @@ export const en = {
   about: {
     title: 'About this bot',
     paragraph1:
-      'At our tennis club, regular courts open up exactly 7 days in advance — and they\'re fully ' +
+      'At our tennis club, regular courts open up a fixed number of days in advance — and they\'re fully ' +
       'booked within minutes. Logging in at just the right moment and clicking "book" myself turned ' +
       'out not to be sustainable in practice, so this bot was born: it automatically checks whether ' +
       'the court becomes available and books it immediately, every week again.',
