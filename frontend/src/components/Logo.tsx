@@ -9,21 +9,23 @@ export function Logo({ size = 32 }: { size?: number }) {
         xmlns="http://www.w3.org/2000/svg"
         aria-hidden="true"
       >
-        <circle cx="16" cy="16" r="15" fill="#ff385c" />
+        <rect x="1" y="1" width="30" height="30" rx="9" fill="#ff385c" />
         <path
-          d="M16 1c-4 4-4 10 0 15s4 11 0 15"
+          d="M11 5v4M21 5v4"
           stroke="#ffffff"
-          strokeWidth="1.5"
-          fill="none"
+          strokeWidth="2"
+          strokeLinecap="round"
         />
+        <rect x="7" y="8" width="18" height="18" rx="4" stroke="#ffffff" strokeWidth="2" />
         <path
-          d="M16 1c4 4 4 10 0 15s-4 11 0 15"
+          d="M11.5 17.5l3 3 6-6"
           stroke="#ffffff"
-          strokeWidth="1.5"
-          fill="none"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         />
       </svg>
-      <span className="logo-wordmark">tennis-bot</span>
+      <span className="logo-wordmark">ReserveringBot</span>
     </span>
   );
 }
