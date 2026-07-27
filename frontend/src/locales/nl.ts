@@ -20,6 +20,11 @@ export const nl = {
       'ReserveringBot boekt elke week automatisch je vaste baan bij de KNLTB, zodra deze ' +
       'beschikbaar komt — zonder dat je er zelf achteraan hoeft te zitten.',
     heroCta: 'Naar dashboard',
+    whatIsTitle: 'Wat is ReserveringBot?',
+    whatIsText:
+      'ReserveringBot is de makkelijkste manier om nooit meer je vaste baan mis te lopen. ' +
+      'Je stelt één keer je vaste dag, tijd en baan in bij de KNLTB — daarna checkt de bot ' +
+      'automatisch of de baan vrijkomt en boekt hem meteen voor je, elke week opnieuw.',
   },
   howItWorksSection: {
     heading: 'Hoe werkt het',

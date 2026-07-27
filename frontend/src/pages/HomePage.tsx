@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { HowItWorksSection } from '../components/HowItWorksSection';
+import { WhatIsSection } from '../components/WhatIsSection';
 import { FaqSection } from '../components/FaqSection';
 
 // Rechtenvrije stockfoto van een padelwedstrijd (Unsplash), gebruikt als hero-achtergrond.
@@ -22,6 +23,7 @@ export function HomePage() {
           </Link>
         </div>
       </div>
+      <WhatIsSection />
       <HowItWorksSection />
       <FaqSection />
     </>

@@ -9,7 +9,7 @@ export function Logo({ size = 32 }: { size?: number }) {
         xmlns="http://www.w3.org/2000/svg"
         aria-hidden="true"
       >
-        <rect x="1" y="1" width="30" height="30" rx="9" fill="#ff385c" />
+        <rect x="1" y="1" width="30" height="30" rx="9" fill="#16a34a" />
         <path
           d="M11 5v4M21 5v4"
           stroke="#ffffff"
