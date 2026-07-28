@@ -7,10 +7,10 @@
   --border: #dddddd;
   --border-light: #ebebeb;
   --code-bg: #f7f7f7;
-  --accent: #ff385c;
-  --accent-hover: #e31c5f;
-  --accent-bg: rgba(255, 56, 92, 0.08);
-  --accent-border: rgba(255, 56, 92, 0.35);
+  --accent: #16a34a;
+  --accent-hover: #15803d;
+  --accent-bg: rgba(22, 163, 74, 0.08);
+  --accent-border: rgba(22, 163, 74, 0.35);
   --success: #008a05;
   --danger: #c13515;
   --radius-lg: 16px;

@@ -102,31 +102,38 @@
 /* Homepage hero */
 .hero {
   position: relative;
-  width: 100vw;
-  margin-left: calc(50% - 50vw);
-  margin-right: calc(50% - 50vw);
   display: flex;
-  justify-content: center;
+  align-items: center;
+  min-height: 480px;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
   background-size: cover;
   background-position: center;
   background-color: var(--text-h);
-  padding: 96px 24px;
+  padding: 56px;
+  margin: 32px 0 96px;
 }
 
 .hero-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6));
+  background: linear-gradient(
+    100deg,
+    rgba(0, 0, 0, 0.8) 0%,
+    rgba(0, 0, 0, 0.6) 42%,
+    rgba(0, 0, 0, 0.15) 70%,
+    transparent 100%
+  );
 }
 
 .hero-content {
   position: relative;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  text-align: center;
+  align-items: flex-start;
+  text-align: left;
   gap: 20px;
-  max-width: 640px;
+  max-width: 460px;
 }
 
 .hero-title {
@@ -138,7 +145,7 @@
 
 .hero-subtitle {
   font-size: 17px;
-  max-width: 560px;
+  max-width: 460px;
   line-height: 1.5;
   color: #ffffff;
 }
@@ -149,13 +156,64 @@
   margin-top: 8px;
 }
 
+/* Homepage "Wat is ReserveringBot" section */
+.what-is-section {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: center;
+  gap: 48px;
+  padding: 0 0 96px;
+}
+
+.what-is-image {
+  width: 100%;
+  height: 360px;
+  object-fit: cover;
+  border-radius: var(--radius-lg);
+}
+
+.what-is-title {
+  margin: 0 0 16px;
+  font-size: 28px;
+}
+
+.what-is-text {
+  font-size: 16px;
+  line-height: 1.6;
+  margin: 0;
+}
+
+@media (max-width: 900px) {
+  .hero {
+    padding: 40px;
+  }
+
+  .what-is-section {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .what-is-image {
+    height: 240px;
+  }
+}
+
 @media (max-width: 640px) {
   .nav-tabs {
     display: none;
   }
 
+  .hero {
+    padding: 28px;
+    min-height: 400px;
+  }
+
   .hero-title {
     font-size: 30px;
+  }
+
+  .hero-content {
+    max-width: 100%;
   }
 }
 
@@ -286,8 +344,8 @@
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: var(--accent-bg);
-  color: var(--accent);
+  background: var(--accent);
+  color: #ffffff;
   font-weight: 700;
   font-size: 15px;
 }

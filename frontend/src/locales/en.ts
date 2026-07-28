@@ -21,6 +21,11 @@ export const en = {
       'ReserveringBot automatically books your regular court at the KNLTB every week, the moment it ' +
       'becomes available — without you having to keep watching for it yourself.',
     heroCta: 'Go to dashboard',
+    whatIsTitle: 'What is ReserveringBot?',
+    whatIsText:
+      'ReserveringBot is the easiest way to never miss your regular court again. Set your ' +
+      'day, time, and court with the KNLTB once — the bot then automatically checks when it ' +
+      'opens up and books it for you instantly, every week.',
   },
   howItWorksSection: {
     heading: 'How it works',
