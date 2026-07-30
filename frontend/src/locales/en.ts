@@ -7,7 +7,9 @@ export const en = {
     howItWorks: 'How it works',
     aboutUs: 'About us',
     contact: 'Contact',
-    dashboardCta: 'Go to dashboard',
+    loginCta: 'Log in',
+    registerCta: 'Register',
+    registerUnavailable: 'An account already exists, log in instead.',
   },
   footer: {
     home: 'Home',
