@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { getAuthStatus, login, register } from '../api/auth';
 import type { AuthUser } from '../api/types';
 import { Card } from './Card';
@@ -9,17 +10,34 @@ export function AuthPage({
 }: {
   onAuthenticated: (token: string, user: AuthUser) => void;
 }) {
+  const [searchParams] = useSearchParams();
   const [mode, setMode] = useState<'login' | 'register' | null>(null);
+  const [registrationAvailable, setRegistrationAvailable] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    const requestedMode = searchParams.get('mode');
     getAuthStatus()
-      .then((status) => setMode(status.registrationAvailable ? 'register' : 'login'))
+      .then((status) => {
+        setRegistrationAvailable(status.registrationAvailable);
+        if (requestedMode === 'register' && status.registrationAvailable) {
+          setMode('register');
+        } else if (requestedMode === 'login') {
+          setMode('login');
+        } else {
+          setMode(status.registrationAvailable ? 'register' : 'login');
+        }
+      })
       .catch(() => setMode('login'));
-  }, []);
+  }, [searchParams]);
+
+  function switchMode(next: 'login' | 'register') {
+    setMode(next);
+    setError(null);
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -43,7 +61,24 @@ export function AuthPage({
         <div className="auth-card-brand">
           <Logo size={40} />
         </div>
-        <h2>{mode === 'register' ? 'Account aanmaken' : 'Inloggen'}</h2>
+        <div className="auth-mode-toggle">
+          <button
+            type="button"
+            className={mode === 'login' ? 'active' : ''}
+            onClick={() => switchMode('login')}
+          >
+            Inloggen
+          </button>
+          <button
+            type="button"
+            className={mode === 'register' ? 'active' : ''}
+            disabled={!registrationAvailable}
+            title={registrationAvailable ? undefined : 'Er bestaat al een account, log in.'}
+            onClick={() => switchMode('register')}
+          >
+            Registreren
+          </button>
+        </div>
         <form className="settings-form" onSubmit={handleSubmit}>
           <div className="form-row">
             <label htmlFor="auth-email">E-mailadres</label>

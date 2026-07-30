@@ -6,7 +6,9 @@ export const nl = {
     howItWorks: 'Hoe werkt het',
     aboutUs: 'Over ons',
     contact: 'Contact',
-    dashboardCta: 'Naar dashboard',
+    loginCta: 'Inloggen',
+    registerCta: 'Registreren',
+    registerUnavailable: 'Er bestaat al een account, log in.',
   },
   footer: {
     home: 'Home',

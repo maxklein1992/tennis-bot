@@ -78,6 +78,25 @@
   background: var(--accent-hover);
 }
 
+.nav-cta-outline {
+  background: transparent;
+  color: var(--text-h);
+  border: 1px solid var(--border-light);
+}
+
+.nav-cta-outline:hover {
+  background: var(--card-bg);
+  border-color: var(--text-h);
+}
+
+.nav-cta-disabled {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border-light);
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
 /* Language switcher */
 .language-switcher {
   border: 1px solid var(--border-light);
@@ -569,13 +588,38 @@
   max-width: 380px;
 }
 
-.auth-card h2 {
-  font-size: 16px;
-  font-weight: 500;
-  color: var(--text);
-  margin-top: 0;
+.auth-mode-toggle {
+  display: flex;
+  gap: 8px;
   margin-bottom: 20px;
-  text-align: center;
+}
+
+.auth-mode-toggle button {
+  flex: 1;
+  font: inherit;
+  font-weight: 600;
+  font-size: 14px;
+  padding: 10px 16px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-light);
+  background: var(--card-bg);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.auth-mode-toggle button:hover:not(:disabled) {
+  color: var(--text-h);
+}
+
+.auth-mode-toggle button.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: white;
+}
+
+.auth-mode-toggle button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 
 .auth-card .form-row {
