@@ -22,6 +22,16 @@ const API_BASE = 'https://api.knltb.club/v1/pub/tennis';
 const APP_BASIC_AUTH =
   'Basic bGlzYXgtYXBpLXB1Yi11c2VyOjZUNmhyTTBOZTkxQlNqa3ZpSnhoOE1BalNucE4xTTl1';
 
+/**
+ * Tijdelijke fallback voor searchClubs() zolang het echte zoek-endpoint
+ * "400 ApiVersionUnspecified" teruggeeft (zie searchClubs hieronder).
+ * Opgehaald via het wél werkende /clubs/{id}-endpoint met het bekende
+ * club-ID uit de oude env-var-seed.
+ */
+const TEMPORARY_KNOWN_CLUBS: ClubSearchResult[] = [
+  { id: 'b818722a-9832-4e00-9829-5d2db2a473b6', name: 'T.V. Cromwijck' },
+];
+
 interface LoginResponse {
   login_status: string;
   token: string;
@@ -49,12 +59,24 @@ export class KnltbApiService implements IKnltbApiService {
    * een aanname naar analogie van `searchMembers` — controleer/pas aan zodra
    * er echt verkeer van de "vereniging zoeken"-flow in de ClubApp is
    * meegekeken. Vereist geen auth-token, alleen de app-brede Basic-auth.
+   *
+   * Bevestigd kapot: de echte API geeft hier altijd "400 ApiVersionUnspecified"
+   * terug (geverifieerd, geen aanname meer) — welke header/param de vereiste
+   * API-versie moet meesturen is niet bekend zonder nieuw netwerkverkeer van de
+   * ClubApp. Tot dat uitgezocht is, valt dit terug op een tijdelijke hardcoded
+   * lijst (opgehaald via het wél werkende /clubs/{id}-endpoint) zodat
+   * onboarden ondertussen niet volledig geblokkeerd is.
    */
   async searchClubs(namePattern: string): Promise<ClubSearchResult[]> {
     const url = `${API_BASE}/clubs?name_pattern=${encodeURIComponent(namePattern)}&page_number=1&page_size=25`;
     const res = await fetch(url, { headers: this.headers() });
     if (!res.ok) {
-      throw new Error(`Kon verenigingen niet doorzoeken: HTTP ${res.status}`);
+      this.logger.warn(
+        `Verenigingen zoeken via de API mislukt (HTTP ${res.status}), val terug op tijdelijke lijst`,
+      );
+      return TEMPORARY_KNOWN_CLUBS.filter((c) =>
+        c.name.toLowerCase().includes(namePattern.trim().toLowerCase()),
+      );
     }
     const data = (await res.json()) as {
       clubs: Array<{ id: string; name: string }>;
