@@ -96,7 +96,7 @@ export function OnboardingPage({
             />
           </div>
           <div className="form-row">
-            <label htmlFor="onboarding-password">Wachtwoord</label>
+            <label htmlFor="onboarding-password">Wachtwoord in KNLTB app</label>
             <input
               id="onboarding-password"
               type="password"
