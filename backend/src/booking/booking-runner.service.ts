@@ -34,8 +34,8 @@ export class BookingRunnerService {
     dryRun: boolean,
   ): Promise<BookingRunResult> {
     const startedAt = Date.now();
-    const account = await this.accountService.getInternal();
     const schedule = await this.schedulesService.getOne(scheduleId);
+    const account = await this.accountService.getInternalByAccountId(schedule.accountId);
     const credentials = {
       clubId: account.clubId,
       membershipNumber: account.membershipNumber,

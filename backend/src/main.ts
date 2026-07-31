@@ -2,7 +2,6 @@ import 'dotenv/config';
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
-import { AccountService } from './account/account.service';
 
 async function bootstrap() {
   if (!process.env.JWT_SECRET) {
@@ -17,8 +16,6 @@ async function bootstrap() {
   app.useGlobalPipes(
     new ValidationPipe({ whitelist: true, transform: true }),
   );
-
-  await app.get(AccountService).seedFromEnvIfEmpty();
 
   await app.listen(process.env.PORT ?? 3000);
 }

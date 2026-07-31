@@ -8,7 +8,6 @@ export const nl = {
     contact: 'Contact',
     loginCta: 'Inloggen',
     registerCta: 'Registreren',
-    registerUnavailable: 'Er bestaat al een account, log in.',
   },
   footer: {
     home: 'Home',

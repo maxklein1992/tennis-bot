@@ -1,27 +1,14 @@
 import { AccountService } from './account.service';
 import { PrismaService } from '../prisma/prisma.service';
 
-/**
- * Regressietest voor issue #13: een vers/leeg account (env-vars leeg bij
- * eerste opstart) mag geen bondsnummer of wachtwoord tonen. Dit wordt sinds
- * de onboardingflow (#3/#4/#11, PR #21) al afgedwongen doordat de gebruiker
- * pas bij het dashboard komt nadat onboardedAt gezet is, maar deze test
- * bewaakt het onderliggende seed-gedrag zelf: seedFromEnvIfEmpty() met lege
- * env-vars mag nooit een niet-lege membershipNumber/wachtwoord neerzetten.
- */
+const TEST_USER_ID = 'user-1';
+/** Placeholder testwaarde, geen echt wachtwoord. */
+const TEST_FIXTURE_KNLTB_PASSWORD = 'not-a-real-credential-test-fixture';
+
 describe('AccountService', () => {
-  const originalEnv = { ...process.env };
-
-  afterEach(() => {
-    process.env = { ...originalEnv };
-    jest.restoreAllMocks();
-  });
-
   function build() {
     const prisma = {
       account: {
-        findUnique: jest.fn(),
-        create: jest.fn(),
         findUniqueOrThrow: jest.fn(),
         update: jest.fn(),
       },
@@ -30,15 +17,10 @@ describe('AccountService', () => {
     return { service, prisma };
   }
 
-  it('seedt een leeg membershipNumber en wachtwoord als de env-vars leeg zijn', async () => {
-    delete process.env.KNLTB_CLUB_ID;
-    delete process.env.KNLTB_MEMBERSHIP_NUMBER;
-    delete process.env.KNLTB_PASSWORD;
-
-    const { service, prisma } = build();
-    prisma.account.findUnique.mockResolvedValue(null);
-    prisma.account.create.mockResolvedValue({
+  function freshAccount(overrides: Partial<Record<string, unknown>> = {}) {
+    return {
       id: 1,
+      userId: TEST_USER_ID,
       clubId: '',
       clubName: null,
       membershipNumber: '',
@@ -46,65 +28,59 @@ describe('AccountService', () => {
       fullName: null,
       onboardedAt: null,
       updatedAt: new Date(),
-    });
-
-    await service.seedFromEnvIfEmpty();
-
-    expect(prisma.account.create).toHaveBeenCalledWith({
-      data: {
-        id: 1,
-        clubId: '',
-        membershipNumber: '',
-        password: '',
-      },
-    });
-  });
-
-  it('een vers account levert een lege membershipNumber en hasPassword: false op', async () => {
-    delete process.env.KNLTB_CLUB_ID;
-    delete process.env.KNLTB_MEMBERSHIP_NUMBER;
-    delete process.env.KNLTB_PASSWORD;
-
-    const { service, prisma } = build();
-    prisma.account.findUnique.mockResolvedValue(null);
-    const freshAccount = {
-      id: 1,
-      clubId: '',
-      clubName: null,
-      membershipNumber: '',
-      password: '',
-      fullName: null,
-      onboardedAt: null,
-      updatedAt: new Date(),
+      ...overrides,
     };
-    prisma.account.create.mockResolvedValue(freshAccount);
-    prisma.account.findUniqueOrThrow.mockResolvedValue(freshAccount);
+  }
 
-    await service.seedFromEnvIfEmpty();
-    const view = await service.get();
+  it('get(userId) haalt het account van precies die gebruiker op', async () => {
+    const { service, prisma } = build();
+    prisma.account.findUniqueOrThrow.mockResolvedValue(freshAccount());
 
+    const view = await service.get(TEST_USER_ID);
+
+    expect(prisma.account.findUniqueOrThrow).toHaveBeenCalledWith({
+      where: { userId: TEST_USER_ID },
+    });
     expect(view.membershipNumber).toBe('');
     expect(view.hasPassword).toBe(false);
     expect(view.onboardedAt).toBeNull();
   });
 
-  it('slaat het seeden over en negeert env-vars als er al een account-rij bestaat', async () => {
-    process.env.KNLTB_MEMBERSHIP_NUMBER = '999999';
-
+  it('getInternalByAccountId(accountId) haalt het volledige record op via het Account-id', async () => {
     const { service, prisma } = build();
-    prisma.account.findUnique.mockResolvedValue({
-      id: 1,
-      clubId: '',
-      clubName: null,
-      membershipNumber: '',
-      password: '',
-      fullName: null,
-      onboardedAt: null,
-      updatedAt: new Date(),
+    prisma.account.findUniqueOrThrow.mockResolvedValue(freshAccount({ id: 42 }));
+
+    const account = await service.getInternalByAccountId(42);
+
+    expect(prisma.account.findUniqueOrThrow).toHaveBeenCalledWith({ where: { id: 42 } });
+    expect(account.id).toBe(42);
+  });
+
+  it('completeOnboarding(userId, input) zet onboardedAt en de KNLTB-gegevens voor die gebruiker', async () => {
+    const { service, prisma } = build();
+    prisma.account.update.mockResolvedValue(
+      freshAccount({
+        clubId: 'club-1',
+        membershipNumber: '123456',
+        password: TEST_FIXTURE_KNLTB_PASSWORD,
+        fullName: 'Henk Klein',
+        onboardedAt: new Date(),
+      }),
+    );
+
+    const view = await service.completeOnboarding(TEST_USER_ID, {
+      fullName: 'Henk Klein',
+      clubId: 'club-1',
+      clubName: 'TV De Fake Smash',
+      membershipNumber: '123456',
+      password: TEST_FIXTURE_KNLTB_PASSWORD,
     });
 
-    await service.seedFromEnvIfEmpty();
-
-    expect(prisma.account.create).not.toHaveBeenCalled();
+    expect(prisma.account.update).toHaveBeenCalledWith({
+      where: { userId: TEST_USER_ID },
+      data: expect.objectContaining({ onboardedAt: expect.any(Date) }),
+    });
+    expect(view.onboardedAt).not.toBeNull();
+    expect(view.hasPassword).toBe(true);
   });
 });

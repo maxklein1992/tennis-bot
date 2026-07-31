@@ -11,10 +11,10 @@ export class MembersService {
     @Inject(KNLTB_API_SERVICE) private readonly knltb: IKnltbApiService,
   ) {}
 
-  async search(namePattern: string): Promise<MemberSearchResult[]> {
+  async search(userId: string, namePattern: string): Promise<MemberSearchResult[]> {
     if (!namePattern || namePattern.trim().length < 2) return [];
 
-    const account = await this.accountService.getInternal();
+    const account = await this.accountService.getInternal(userId);
     const credentials = {
       clubId: account.clubId,
       membershipNumber: account.membershipNumber,

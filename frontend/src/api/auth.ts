@@ -1,4 +1,4 @@
-import type { AuthResult, AuthStatus, AuthUser } from './types';
+import type { AuthResult, AuthUser } from './types';
 
 const TOKEN_KEY = 'tennisbot_token';
 
@@ -17,12 +17,6 @@ export function clearToken(): void {
 async function parseError(res: Response, fallback: string): Promise<Error> {
   const body = await res.json().catch(() => null);
   return new Error(body?.message ?? fallback);
-}
-
-export async function getAuthStatus(): Promise<AuthStatus> {
-  const res = await fetch('/api/auth/status');
-  if (!res.ok) throw await parseError(res, 'Kon status niet ophalen.');
-  return res.json();
 }
 
 export async function register(email: string, password: string): Promise<AuthResult> {

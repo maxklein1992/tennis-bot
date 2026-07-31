@@ -1,9 +1,7 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { UpdateAccountDto } from './dto/update-account.dto';
 import type { Account, Prisma } from '@prisma/client';
-
-const ACCOUNT_ID = 1;
 
 export interface AccountView {
   clubId: string;
@@ -39,48 +37,30 @@ function toView(account: Account): AccountView {
 
 @Injectable()
 export class AccountService {
-  private readonly logger = new Logger(AccountService.name);
-
   constructor(private readonly prisma: PrismaService) {}
 
-  /**
-   * Zet eenmalig een Account-rij neer vanuit env-vars als er nog geen rij
-   * bestaat. Draait bij het opstarten. Zodra de rij bestaat, is de database
-   * de bron van waarheid en worden de env-vars genegeerd.
-   */
-  async seedFromEnvIfEmpty(): Promise<void> {
-    const existing = await this.prisma.account.findUnique({
-      where: { id: ACCOUNT_ID },
-    });
-    if (existing) {
-      this.logger.log('Account-rij bestaat al, env-vars worden genegeerd');
-      return;
-    }
-
-    await this.prisma.account.create({
-      data: {
-        id: ACCOUNT_ID,
-        clubId: process.env.KNLTB_CLUB_ID ?? '',
-        membershipNumber: process.env.KNLTB_MEMBERSHIP_NUMBER ?? '',
-        password: process.env.KNLTB_PASSWORD ?? '',
-      },
-    });
-    this.logger.log('Account geseed vanuit environment variables');
-  }
-
-  async get(): Promise<AccountView> {
+  async get(userId: string): Promise<AccountView> {
     const account = await this.prisma.account.findUniqueOrThrow({
-      where: { id: ACCOUNT_ID },
+      where: { userId },
     });
     return toView(account);
   }
 
-  /** Volledig record, inclusief wachtwoord — alleen voor intern gebruik (booking-runner/members). */
-  async getInternal(): Promise<Account> {
-    return this.prisma.account.findUniqueOrThrow({ where: { id: ACCOUNT_ID } });
+  /** Volledig record, inclusief wachtwoord — alleen voor intern gebruik (onboarding/members). */
+  async getInternal(userId: string): Promise<Account> {
+    return this.prisma.account.findUniqueOrThrow({ where: { userId } });
   }
 
-  async update(dto: UpdateAccountDto): Promise<AccountView> {
+  /**
+   * Volledig record via het Account-id zelf i.p.v. userId — alleen voor de
+   * booking-runner, die enkel `schedule.accountId` beschikbaar heeft (geen
+   * ingelogde gebruiker/request in scope, draait als achtergrondlus).
+   */
+  async getInternalByAccountId(accountId: number): Promise<Account> {
+    return this.prisma.account.findUniqueOrThrow({ where: { id: accountId } });
+  }
+
+  async update(userId: string, dto: UpdateAccountDto): Promise<AccountView> {
     const data: Prisma.AccountUpdateInput = {
       clubId: dto.clubId,
       membershipNumber: dto.membershipNumber,
@@ -89,7 +69,7 @@ export class AccountService {
       data.password = dto.password;
     }
     const account = await this.prisma.account.update({
-      where: { id: ACCOUNT_ID },
+      where: { userId },
       data,
     });
     return toView(account);
@@ -101,10 +81,11 @@ export class AccountService {
    * inloggegevens al succesvol tegen de KNLTB-API heeft geverifieerd.
    */
   async completeOnboarding(
+    userId: string,
     input: CompleteOnboardingInput,
   ): Promise<AccountView> {
     const account = await this.prisma.account.update({
-      where: { id: ACCOUNT_ID },
+      where: { userId },
       data: {
         fullName: input.fullName,
         clubId: input.clubId,
