@@ -20,6 +20,7 @@ export function DashboardPage() {
   const [schedules, setSchedules] = useState<Schedule[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [modalSchedule, setModalSchedule] = useState<Schedule | null | 'new'>(null);
+  const [showOnboarding, setShowOnboarding] = useState(false);
   const [toast, setToast] = useState<ToastMessage | null>(null);
 
   function refresh() {
@@ -73,14 +74,32 @@ export function DashboardPage() {
 
   function handleOnboardingComplete(updatedAccount: Account) {
     setAccount(updatedAccount);
+    setShowOnboarding(false);
     setToast({ kind: 'success', text: 'KNLTB-gegevens geverifieerd. Welkom bij ReserveringBot!' });
+    // Dit was hoogstwaarschijnlijk getriggerd door een poging tot een nieuwe
+    // reservering — nu de KNLTB-koppeling er is, meteen doorpakken.
+    setModalSchedule('new');
+  }
+
+  function handleNewSchedule() {
+    if (!account || account === 'checking') return;
+    if (!account.onboardedAt) {
+      setShowOnboarding(true);
+      return;
+    }
+    setModalSchedule('new');
   }
 
   if (user === 'checking') return null;
   if (!user) return <AuthPage onAuthenticated={handleAuthenticated} />;
   if (account === 'checking') return null;
-  if (!account || !account.onboardedAt) {
-    return <OnboardingPage onComplete={handleOnboardingComplete} />;
+  if (showOnboarding) {
+    return (
+      <OnboardingPage
+        onComplete={handleOnboardingComplete}
+        onCancel={() => setShowOnboarding(false)}
+      />
+    );
   }
 
   return (
@@ -108,7 +127,7 @@ export function DashboardPage() {
         schedules={schedules}
         onChanged={refresh}
         onEdit={(schedule) => setModalSchedule(schedule)}
-        onNew={() => setModalSchedule('new')}
+        onNew={handleNewSchedule}
       />
 
       <AccountForm />

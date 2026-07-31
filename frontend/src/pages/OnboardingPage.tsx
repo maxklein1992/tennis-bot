@@ -25,8 +25,10 @@ const TEMPORARY_DEFAULT_CLUB: Club = {
  */
 export function OnboardingPage({
   onComplete,
+  onCancel,
 }: {
   onComplete: (account: Account) => void;
+  onCancel?: () => void;
 }) {
   const [fullName, setFullName] = useState('');
   const [club, setClub] = useState<Club | null>(TEMPORARY_DEFAULT_CLUB);
@@ -65,9 +67,10 @@ export function OnboardingPage({
         <div className="onboarding-card-brand">
           <Logo size={40} />
         </div>
-        <h1>Welkom bij ReserveringBot</h1>
+        <h1>Verbind met de KNLTB app</h1>
         <p className="onboarding-intro">
-          Voordat je naar het dashboard gaat, hebben we nog een paar gegevens nodig.
+          Voordat je een reservering kan aanmaken, moet je eerst verbinding maken met de
+          KNLTB app.
         </p>
         <form className="settings-form" onSubmit={handleSubmit}>
           <div className="form-row">
@@ -106,9 +109,16 @@ export function OnboardingPage({
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
-          <button type="submit" disabled={submitting} className="primary-button">
-            {submitting ? 'Bezig met verifiëren...' : 'Opslaan en doorgaan'}
-          </button>
+          <div className="modal-actions">
+            {onCancel && (
+              <button type="button" onClick={onCancel} disabled={submitting}>
+                Annuleren
+              </button>
+            )}
+            <button type="submit" disabled={submitting} className="primary-button">
+              {submitting ? 'Bezig met verifiëren...' : 'Opslaan en doorgaan'}
+            </button>
+          </div>
           {error && <p className="form-message form-error">{error}</p>}
         </form>
       </Card>
