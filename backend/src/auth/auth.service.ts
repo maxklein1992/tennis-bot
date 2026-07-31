@@ -5,9 +5,12 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
+
+const PRISMA_UNIQUE_CONSTRAINT_ERROR = 'P2002';
 
 export interface AuthUser {
   id: string;
@@ -28,26 +31,33 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  /** true zolang er nog geen dashboard-gebruiker is aangemaakt (eerste-keer setup). */
-  async registrationAvailable(): Promise<boolean> {
-    const count = await this.prisma.user.count();
-    return count === 0;
-  }
-
   /**
-   * Registratie is alleen mogelijk zolang er nog geen gebruiker bestaat. Het
-   * dashboard is voor persoonlijk gebruik; na de eerste account moet iedereen
-   * inloggen in plaats van een nieuw account aan te kunnen maken.
+   * Maakt een nieuwe gebruiker aan, samen met een lege, gekoppelde Account-
+   * rij (dezelfde lege defaults die vroeger via env-vars werden geseed) zodat
+   * de gebruiker meteen door de onboardingflow kan om zijn eigen KNLTB-
+   * gegevens te koppelen. Elke gebruiker krijgt zijn eigen Account — geen
+   * gedeelde toegang tussen accounts.
    */
   async register(dto: RegisterDto): Promise<AuthResult> {
-    if (!(await this.registrationAvailable())) {
-      throw new ConflictException('Er bestaat al een account, log in.');
-    }
-
     const passwordHash = await bcrypt.hash(dto.password, SALT_ROUNDS);
-    const user = await this.prisma.user.create({
-      data: { email: dto.email.toLowerCase(), passwordHash },
-    });
+    let user: { id: string; email: string };
+    try {
+      user = await this.prisma.user.create({
+        data: {
+          email: dto.email.toLowerCase(),
+          passwordHash,
+          account: { create: { clubId: '', membershipNumber: '', password: '' } },
+        },
+      });
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === PRISMA_UNIQUE_CONSTRAINT_ERROR
+      ) {
+        throw new ConflictException('Er bestaat al een account met dit e-mailadres.');
+      }
+      throw error;
+    }
     return this.buildResult(user.id, user.email);
   }
 

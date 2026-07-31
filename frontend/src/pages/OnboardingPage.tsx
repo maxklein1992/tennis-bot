@@ -6,6 +6,18 @@ import { ClubPicker } from '../components/ClubPicker';
 import { Logo } from '../components/Logo';
 
 /**
+ * Tijdelijk vooraf ingevulde vereniging, zolang het echte vereniging-
+ * zoeken kapot is (zie backend/src/knltb/knltb-api.service.ts —
+ * TEMPORARY_KNOWN_CLUBS). Voorkomt dat je moet typen/zoeken om de enige
+ * vereniging te vinden die de tijdelijke fallback kent. Verwijderen zodra
+ * het echte zoek-endpoint gefixed is.
+ */
+const TEMPORARY_DEFAULT_CLUB: Club = {
+  id: 'b818722a-9832-4e00-9829-5d2db2a473b6',
+  name: 'T.V. Cromwijck',
+};
+
+/**
  * Onboardingpagina (issues #3, #4, #11): verplichte stap direct na
  * registratie, vóór het dashboard. Vraagt volledige naam, vereniging
  * (opgezocht op naam, levert clubId), bondsnummer en KNLTB-wachtwoord, en
@@ -17,7 +29,7 @@ export function OnboardingPage({
   onComplete: (account: Account) => void;
 }) {
   const [fullName, setFullName] = useState('');
-  const [club, setClub] = useState<Club | null>(null);
+  const [club, setClub] = useState<Club | null>(TEMPORARY_DEFAULT_CLUB);
   const [membershipNumber, setMembershipNumber] = useState('');
   const [password, setPassword] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -84,7 +96,7 @@ export function OnboardingPage({
             />
           </div>
           <div className="form-row">
-            <label htmlFor="onboarding-password">Wachtwoord</label>
+            <label htmlFor="onboarding-password">Wachtwoord in KNLTB app</label>
             <input
               id="onboarding-password"
               type="password"

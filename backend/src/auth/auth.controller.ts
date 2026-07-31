@@ -10,12 +10,6 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Public()
-  @Get('status')
-  async status() {
-    return { registrationAvailable: await this.authService.registrationAvailable() };
-  }
-
-  @Public()
   @Post('register')
   async register(@Body() dto: RegisterDto) {
     return this.authService.register(dto);

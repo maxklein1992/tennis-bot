@@ -6,6 +6,7 @@ import { SubmitOnboardingDto } from './dto/submit-onboarding.dto';
 
 /** Placeholder testwaarde, geen echt wachtwoord. */
 const TEST_FIXTURE_KNLTB_PASSWORD = 'not-a-real-credential-test-fixture';
+const TEST_USER_ID = 'user-1';
 
 describe('OnboardingService', () => {
   const dto: SubmitOnboardingDto = Object.assign(new SubmitOnboardingDto(), {
@@ -51,7 +52,7 @@ describe('OnboardingService', () => {
   it('verifieert via KNLTB en slaat pas daarna op bij succes', async () => {
     const { service, accountService, knltb } = build();
 
-    const result = await service.submit(dto);
+    const result = await service.submit(TEST_USER_ID, dto);
 
     expect(knltb.login).toHaveBeenCalledWith({
       clubId: dto.clubId,
@@ -59,7 +60,7 @@ describe('OnboardingService', () => {
       password: dto.password,
     });
     expect(knltb.logout).toHaveBeenCalled();
-    expect(accountService.completeOnboarding).toHaveBeenCalledWith({
+    expect(accountService.completeOnboarding).toHaveBeenCalledWith(TEST_USER_ID, {
       fullName: dto.fullName,
       clubId: dto.clubId,
       clubName: dto.clubName,
@@ -76,7 +77,7 @@ describe('OnboardingService', () => {
         .mockRejectedValue(new Error('Inloggen mislukt: status=failed')),
     });
 
-    await expect(service.submit(dto)).rejects.toThrow(BadRequestException);
+    await expect(service.submit(TEST_USER_ID, dto)).rejects.toThrow(BadRequestException);
     expect(accountService.completeOnboarding).not.toHaveBeenCalled();
   });
 });

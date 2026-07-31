@@ -37,13 +37,16 @@ model User {
   email        String   @unique
   passwordHash String
   createdAt    DateTime @default(now())
+  account      Account?
 }
 
-/// Singleton rij (id altijd 1): alleen de KNLTB-inloggegevens. Meerdere
-/// wekelijkse reserveringen delen hetzelfde account, vandaar apart van
-/// BookingSchedule.
+/// De KNLTB-inloggegevens van precies één User (1-op-1). Meerdere
+/// wekelijkse reserveringen kunnen hetzelfde account delen, vandaar apart
+/// van BookingSchedule.
 model Account {
-  id               Int       @id @default(1)
+  id               Int               @id @default(autoincrement())
+  userId           String            @unique
+  user             User              @relation(fields: [userId], references: [id], onDelete: Cascade)
   clubId           String
   /// Weergavenaam van de vereniging bij clubId (denormalized, opgezocht via
   /// de verenigingszoekfunctie tijdens onboarding — zelfde patroon als
@@ -55,15 +58,19 @@ model Account {
   fullName         String?
   /// Gezet zodra de onboarding is voltooid (incl. succesvolle KNLTB-verificatie).
   /// Null = onboarding nog niet doorlopen, ongeacht wat er in de overige
-  /// velden staat (die kunnen al geseed zijn vanuit env-vars).
+  /// velden staat.
   onboardedAt      DateTime?
-  updatedAt        DateTime  @updatedAt
+  updatedAt        DateTime          @updatedAt
+  schedules        BookingSchedule[]
 }
 
-/// Eén wekelijkse terugkerende reservering. Meerdere rijen mogelijk (bv.
-/// vrijdagochtend met Henk, zondagavond met Conny).
+/// Eén wekelijkse terugkerende reservering, gekoppeld aan precies één
+/// Account. Meerdere rijen per account mogelijk (bv. vrijdagochtend met
+/// Henk, zondagavond met Conny).
 model BookingSchedule {
   id                 String           @id @default(uuid())
+  accountId          Int
+  account            Account          @relation(fields: [accountId], references: [id], onDelete: Cascade)
   label              String?
   partnerMemberIds   String[]         @default([])
   /// Weergavenamen, zelfde volgorde/index als partnerMemberIds (denormalized
@@ -78,6 +85,8 @@ model BookingSchedule {
   createdAt          DateTime         @default(now())
   updatedAt          DateTime         @updatedAt
   attempts           BookingAttempt[]
+
+  @@index([accountId])
 }
 
 model BookingAttempt {

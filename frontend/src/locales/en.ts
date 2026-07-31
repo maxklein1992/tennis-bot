@@ -9,7 +9,6 @@ export const en = {
     contact: 'Contact',
     loginCta: 'Log in',
     registerCta: 'Register',
-    registerUnavailable: 'An account already exists, log in instead.',
   },
   footer: {
     home: 'Home',

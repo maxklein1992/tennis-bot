@@ -30,8 +30,9 @@ export interface RecordAttemptInput {
 export class SchedulesService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async list() {
+  async list(userId: string) {
     const schedules = await this.prisma.bookingSchedule.findMany({
+      where: { account: { userId } },
       orderBy: { createdAt: 'asc' },
       include: {
         attempts: {
@@ -44,7 +45,7 @@ export class SchedulesService {
     });
     const successCounts = await this.prisma.bookingAttempt.groupBy({
       by: ['scheduleId'],
-      where: { status: 'SUCCESS' },
+      where: { status: 'SUCCESS', schedule: { account: { userId } } },
       _count: true,
     });
     const successMap = new Map(successCounts.map((s) => [s.scheduleId, s._count]));
@@ -52,15 +53,34 @@ export class SchedulesService {
     return schedules.map((s) => this.toView(s, successMap.get(s.id) ?? 0));
   }
 
+  /**
+   * Ongescoped — alleen voor interne achtergrond-aanroepers zonder
+   * gebruikerscontext (BookingRunnerService, BookingSchedulerService). Die
+   * zien alleen id's die al uit de globale listEnabled() kwamen, dus dat
+   * blijft veilig.
+   */
   async getOne(id: string): Promise<BookingSchedule> {
     const schedule = await this.prisma.bookingSchedule.findUnique({ where: { id } });
     if (!schedule) throw new NotFoundException(`Reservering ${id} niet gevonden`);
     return schedule;
   }
 
-  async create(dto: ScheduleInputDto) {
+  /**
+   * Eigenaarscheck: geeft 404 (niet 403) als het schema niet bestaat óf van
+   * een andere gebruiker is, zodat er geen bestaans-informatie lekt.
+   */
+  async findOwned(id: string, userId: string): Promise<BookingSchedule> {
+    const schedule = await this.prisma.bookingSchedule.findFirst({
+      where: { id, account: { userId } },
+    });
+    if (!schedule) throw new NotFoundException(`Reservering ${id} niet gevonden`);
+    return schedule;
+  }
+
+  async create(userId: string, dto: ScheduleInputDto) {
     const schedule = await this.prisma.bookingSchedule.create({
       data: {
+        account: { connect: { userId } },
         label: dto.label,
         partnerMemberIds: dto.partners?.map((p) => p.id) ?? [],
         partnerMemberNames: dto.partners?.map((p) => p.name) ?? [],
@@ -74,8 +94,8 @@ export class SchedulesService {
     return this.toView({ ...schedule, attempts: [], _count: { attempts: 0 } }, 0);
   }
 
-  async update(id: string, dto: ScheduleInputDto) {
-    await this.getOne(id);
+  async update(id: string, userId: string, dto: ScheduleInputDto) {
+    await this.findOwned(id, userId);
     const data: Prisma.BookingScheduleUpdateInput = {
       label: dto.label,
       targetWeekday: dto.targetWeekday,
@@ -106,13 +126,13 @@ export class SchedulesService {
     return this.toView(schedule, successCount);
   }
 
-  async setEnabled(id: string, enabled: boolean) {
-    await this.getOne(id);
+  async setEnabled(id: string, userId: string, enabled: boolean) {
+    await this.findOwned(id, userId);
     await this.prisma.bookingSchedule.update({ where: { id }, data: { enabled } });
   }
 
-  async remove(id: string): Promise<void> {
-    await this.getOne(id);
+  async remove(id: string, userId: string): Promise<void> {
+    await this.findOwned(id, userId);
     await this.prisma.bookingSchedule.delete({ where: { id } });
   }
 

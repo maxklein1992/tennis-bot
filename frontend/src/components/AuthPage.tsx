@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { getAuthStatus, login, register } from '../api/auth';
+import { login, register } from '../api/auth';
 import type { AuthUser } from '../api/types';
 import { Card } from './Card';
 import { Logo } from './Logo';
@@ -11,28 +11,22 @@ export function AuthPage({
   onAuthenticated: (token: string, user: AuthUser) => void;
 }) {
   const [searchParams] = useSearchParams();
-  const [mode, setMode] = useState<'login' | 'register' | null>(null);
-  const [registrationAvailable, setRegistrationAvailable] = useState(true);
+  const [mode, setMode] = useState<'login' | 'register'>(
+    searchParams.get('mode') === 'register' ? 'register' : 'login',
+  );
+
+  // Zonder dit blijft `mode` hangen op de waarde van de eerste mount: als
+  // deze pagina niet opnieuw gemount wordt (bv. browser terug/vooruit
+  // tussen ?mode=login en ?mode=register op dezelfde route) reageert de
+  // tab-status anders niet meer op de URL.
+  useEffect(() => {
+    setMode(searchParams.get('mode') === 'register' ? 'register' : 'login');
+  }, [searchParams]);
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const requestedMode = searchParams.get('mode');
-    getAuthStatus()
-      .then((status) => {
-        setRegistrationAvailable(status.registrationAvailable);
-        if (requestedMode === 'register' && status.registrationAvailable) {
-          setMode('register');
-        } else if (requestedMode === 'login') {
-          setMode('login');
-        } else {
-          setMode(status.registrationAvailable ? 'register' : 'login');
-        }
-      })
-      .catch(() => setMode('login'));
-  }, [searchParams]);
 
   function switchMode(next: 'login' | 'register') {
     setMode(next);
@@ -53,8 +47,6 @@ export function AuthPage({
     }
   }
 
-  if (mode === null) return null;
-
   return (
     <div className="auth-page">
       <Card className="auth-card">
@@ -72,8 +64,6 @@ export function AuthPage({
           <button
             type="button"
             className={mode === 'register' ? 'active' : ''}
-            disabled={!registrationAvailable}
-            title={registrationAvailable ? undefined : 'Er bestaat al een account, log in.'}
             onClick={() => switchMode('register')}
           >
             Registreren

@@ -95,7 +95,3 @@ export interface AuthResult {
   accessToken: string;
   user: AuthUser;
 }
-
-export interface AuthStatus {
-  registrationAvailable: boolean;
-}

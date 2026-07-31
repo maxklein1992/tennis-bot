@@ -25,7 +25,7 @@ export class OnboardingService {
    * onboardingpagina met een duidelijke foutmelding, en verandert er niets
    * aan het bestaande Account-record.
    */
-  async submit(dto: SubmitOnboardingDto): Promise<AccountView> {
+  async submit(userId: string, dto: SubmitOnboardingDto): Promise<AccountView> {
     const credentials = {
       clubId: dto.clubId,
       membershipNumber: dto.membershipNumber,
@@ -47,7 +47,7 @@ export class OnboardingService {
 
     await this.knltb.logout(credentials, token).catch(() => {});
 
-    return this.accountService.completeOnboarding({
+    return this.accountService.completeOnboarding(userId, {
       fullName: dto.fullName,
       clubId: dto.clubId,
       clubName: dto.clubName,
