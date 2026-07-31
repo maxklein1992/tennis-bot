@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { login, register } from '../api/auth';
 import type { AuthUser } from '../api/types';
@@ -14,6 +14,15 @@ export function AuthPage({
   const [mode, setMode] = useState<'login' | 'register'>(
     searchParams.get('mode') === 'register' ? 'register' : 'login',
   );
+
+  // Zonder dit blijft `mode` hangen op de waarde van de eerste mount: als
+  // deze pagina niet opnieuw gemount wordt (bv. browser terug/vooruit
+  // tussen ?mode=login en ?mode=register op dezelfde route) reageert de
+  // tab-status anders niet meer op de URL.
+  useEffect(() => {
+    setMode(searchParams.get('mode') === 'register' ? 'register' : 'login');
+  }, [searchParams]);
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [submitting, setSubmitting] = useState(false);
