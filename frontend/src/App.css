@@ -572,7 +572,8 @@
 /* Use .card compound selector so this wins over .card's border shorthand,
    which appears later in this file. */
 .card.auth-card,
-.card.onboarding-card {
+.card.onboarding-card,
+.modal.onboarding-card {
   border-top: 3px solid var(--accent);
 }
 
@@ -986,6 +987,40 @@
 
 .form-row-start {
   align-items: flex-start;
+}
+
+.password-input {
+  position: relative;
+  display: inline-flex;
+  min-width: 220px;
+}
+
+.password-input input {
+  width: 100%;
+  padding-right: 36px;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--text);
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+}
+
+.password-toggle:hover {
+  color: var(--text-h);
+  background: var(--accent-bg);
 }
 
 .partner-picker {

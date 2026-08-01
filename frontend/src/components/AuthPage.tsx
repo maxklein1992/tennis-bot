@@ -4,6 +4,7 @@ import { login, register } from '../api/auth';
 import type { AuthUser } from '../api/types';
 import { Card } from './Card';
 import { Logo } from './Logo';
+import { PasswordInput } from './PasswordInput';
 
 export function AuthPage({
   onAuthenticated,
@@ -83,9 +84,8 @@ export function AuthPage({
           </div>
           <div className="form-row">
             <label htmlFor="auth-password">Wachtwoord</label>
-            <input
+            <PasswordInput
               id="auth-password"
-              type="password"
               required
               minLength={mode === 'register' ? 8 : undefined}
               autoComplete={mode === 'register' ? 'new-password' : 'current-password'}

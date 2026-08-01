@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { submitOnboarding } from '../api/client';
 import type { Account, Club } from '../api/types';
-import { Card } from '../components/Card';
 import { ClubPicker } from '../components/ClubPicker';
 import { Logo } from '../components/Logo';
+import { PasswordInput } from '../components/PasswordInput';
 
 /**
  * Tijdelijk vooraf ingevulde vereniging, zolang het echte vereniging-
@@ -18,17 +18,18 @@ const TEMPORARY_DEFAULT_CLUB: Club = {
 };
 
 /**
- * Onboardingpagina (issues #3, #4, #11): verplichte stap direct na
- * registratie, vóór het dashboard. Vraagt volledige naam, vereniging
- * (opgezocht op naam, levert clubId), bondsnummer en KNLTB-wachtwoord, en
- * verifieert de inloggegevens live bij KNLTB voordat ze worden opgeslagen.
+ * Onboarding als popup (issues #3, #4, #11), getoond zodra je voor het
+ * eerst een reservering probeert aan te maken zonder KNLTB-koppeling.
+ * Vraagt volledige naam, vereniging (opgezocht op naam, levert clubId),
+ * bondsnummer en KNLTB-wachtwoord, en verifieert de inloggegevens live bij
+ * KNLTB voordat ze worden opgeslagen.
  */
 export function OnboardingPage({
   onComplete,
   onCancel,
 }: {
   onComplete: (account: Account) => void;
-  onCancel?: () => void;
+  onCancel: () => void;
 }) {
   const [fullName, setFullName] = useState('');
   const [club, setClub] = useState<Club | null>(TEMPORARY_DEFAULT_CLUB);
@@ -62,8 +63,8 @@ export function OnboardingPage({
   }
 
   return (
-    <div className="auth-page">
-      <Card className="onboarding-card">
+    <div className="modal-overlay" onClick={onCancel}>
+      <div className="modal onboarding-card" onClick={(e) => e.stopPropagation()}>
         <div className="onboarding-card-brand">
           <Logo size={40} />
         </div>
@@ -100,9 +101,8 @@ export function OnboardingPage({
           </div>
           <div className="form-row">
             <label htmlFor="onboarding-password">Wachtwoord in KNLTB app</label>
-            <input
+            <PasswordInput
               id="onboarding-password"
-              type="password"
               required
               autoComplete="current-password"
               value={password}
@@ -110,18 +110,16 @@ export function OnboardingPage({
             />
           </div>
           <div className="modal-actions">
-            {onCancel && (
-              <button type="button" onClick={onCancel} disabled={submitting}>
-                Annuleren
-              </button>
-            )}
+            <button type="button" onClick={onCancel} disabled={submitting}>
+              Annuleren
+            </button>
             <button type="submit" disabled={submitting} className="primary-button">
               {submitting ? 'Bezig met verifiëren...' : 'Opslaan en doorgaan'}
             </button>
           </div>
           {error && <p className="form-message form-error">{error}</p>}
         </form>
-      </Card>
+      </div>
     </div>
   );
 }

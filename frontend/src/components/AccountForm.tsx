@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { getAccount, updateAccount } from '../api/client';
 import type { Account } from '../api/types';
 import { Card } from './Card';
+import { PasswordInput } from './PasswordInput';
 
 export function AccountForm() {
   const [account, setAccount] = useState<Account | null>(null);
@@ -56,9 +57,8 @@ export function AccountForm() {
         </div>
         <div className="form-row">
           <label htmlFor="password">Wachtwoord</label>
-          <input
+          <PasswordInput
             id="password"
-            type="password"
             placeholder={account.hasPassword ? 'laat leeg om ongewijzigd te laten' : ''}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
