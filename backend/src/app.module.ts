@@ -9,6 +9,7 @@ import { BookingModule } from './booking/booking.module';
 import { MembersModule } from './members/members.module';
 import { ClubsModule } from './clubs/clubs.module';
 import { OnboardingModule } from './onboarding/onboarding.module';
+import { StatsModule } from './stats/stats.module';
 import { AuthModule } from './auth/auth.module';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 
@@ -26,6 +27,7 @@ import { JwtAuthGuard } from './auth/jwt-auth.guard';
     MembersModule,
     ClubsModule,
     OnboardingModule,
+    StatsModule,
   ],
   providers: [{ provide: APP_GUARD, useClass: JwtAuthGuard }],
 })
