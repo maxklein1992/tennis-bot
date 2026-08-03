@@ -12,7 +12,8 @@ export type AttemptStatus =
   | 'VALIDATION_FAILED'
   | 'NO_SLOT_FOUND'
   | 'BOOKING_FAILED'
-  | 'ERROR';
+  | 'ERROR'
+  | 'SKIPPED';
 
 export interface Partner {
   id: string;
@@ -49,6 +50,17 @@ export interface ScheduleInput {
   courtPreference?: string[];
   durationMinutes?: number;
   enabled?: boolean;
+}
+
+export interface ScheduleException {
+  date: string;
+  skip: boolean;
+  partners: Partner[];
+}
+
+export interface ScheduleExceptionInput {
+  skip: boolean;
+  partners?: Partner[];
 }
 
 export interface Account {

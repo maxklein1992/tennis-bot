@@ -3,6 +3,7 @@ import { DateTime } from 'luxon';
 import { AttemptStatus, TriggerType } from '@prisma/client';
 import { AccountService } from '../account/account.service';
 import { SchedulesService } from '../schedules/schedules.service';
+import { ScheduleExceptionsService } from '../schedules/schedule-exceptions.service';
 import { KNLTB_API_SERVICE } from '../knltb/knltb-api.interface';
 import type { IKnltbApiService } from '../knltb/knltb-api.interface';
 import { findAvailableSlot } from '../knltb/knltb-matching';
@@ -25,6 +26,7 @@ export class BookingRunnerService {
   constructor(
     private readonly accountService: AccountService,
     private readonly schedulesService: SchedulesService,
+    private readonly scheduleExceptions: ScheduleExceptionsService,
     @Inject(KNLTB_API_SERVICE) private readonly knltb: IKnltbApiService,
   ) {}
 
@@ -58,11 +60,33 @@ export class BookingRunnerService {
       `[${schedule.label ?? scheduleId}] Doelmoment: ${targetStart.toISO()} tot ${targetEnd.toISO()} (trigger=${trigger}, dryRun=${dryRun})`,
     );
 
+    // Uitzondering-check vóór de KNLTB-login: bij een skip is er geen enkele
+    // reden om een sessie te openen. Bij een partner-override wordt verderop
+    // schedule.partnerMemberIds vervangen door exception.partnerMemberIds.
+    const exception = await this.scheduleExceptions.findForDate(scheduleId, targetStart);
+    if (exception?.skip) {
+      const message = 'Overgeslagen: uitzondering ingesteld voor deze datum';
+      const attempt = await this.schedulesService.recordAttempt(scheduleId, {
+        trigger,
+        dryRun,
+        targetStart: targetStart.toJSDate(),
+        targetEnd: targetEnd.toJSDate(),
+        status: 'SKIPPED',
+        errorMessage: message,
+        durationMs: Date.now() - startedAt,
+      });
+      this.logger.log(message);
+      return { status: 'SKIPPED', message, attemptId: attempt.id };
+    }
+
     let token: string | undefined;
     try {
       const login = await this.knltb.login(credentials);
       token = login.token;
-      const memberIds = [login.memberId, ...schedule.partnerMemberIds];
+      const memberIds = [
+        login.memberId,
+        ...(exception ? exception.partnerMemberIds : schedule.partnerMemberIds),
+      ];
 
       const deadline = Date.now() + RETRY_WINDOW_MS;
       while (Date.now() < deadline) {

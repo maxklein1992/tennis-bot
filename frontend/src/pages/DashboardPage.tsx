@@ -7,6 +7,7 @@ import { OverviewCard } from '../components/OverviewCard';
 import { NextUpCard } from '../components/NextUpCard';
 import { ActiveReservationsCard } from '../components/ActiveReservationsCard';
 import { ScheduleModal } from '../components/ScheduleModal';
+import { ScheduleExceptionsModal } from '../components/ScheduleExceptionsModal';
 import { AccountForm } from '../components/AccountForm';
 import { AuthPage } from '../components/AuthPage';
 import { OnboardingPage } from './OnboardingPage';
@@ -20,6 +21,7 @@ export function DashboardPage() {
   const [schedules, setSchedules] = useState<Schedule[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [modalSchedule, setModalSchedule] = useState<Schedule | null | 'new'>(null);
+  const [exceptionsSchedule, setExceptionsSchedule] = useState<Schedule | null>(null);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [toast, setToast] = useState<ToastMessage | null>(null);
 
@@ -127,6 +129,7 @@ export function DashboardPage() {
         schedules={schedules}
         onChanged={refresh}
         onEdit={(schedule) => setModalSchedule(schedule)}
+        onExceptions={(schedule) => setExceptionsSchedule(schedule)}
         onNew={handleNewSchedule}
       />
 
@@ -137,6 +140,14 @@ export function DashboardPage() {
           schedule={modalSchedule === 'new' ? null : modalSchedule}
           onClose={() => setModalSchedule(null)}
           onSaved={refresh}
+        />
+      )}
+
+      {exceptionsSchedule && (
+        <ScheduleExceptionsModal
+          schedule={exceptionsSchedule}
+          onClose={() => setExceptionsSchedule(null)}
+          onChanged={refresh}
         />
       )}
 

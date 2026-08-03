@@ -41,7 +41,10 @@ export class SchedulesService {
           take: RECENT_ATTEMPTS_LIMIT,
           select: { id: true, createdAt: true, status: true, courtName: true },
         },
-        _count: { select: { attempts: true } },
+        // SKIPPED-pogingen zijn geen echte boekpogingen (bewust overgeslagen
+        // door een uitzondering) en tellen daarom niet mee in totalCount —
+        // anders vertekent een skip het zichtbare succespercentage.
+        _count: { select: { attempts: { where: { status: { not: 'SKIPPED' } } } } },
       },
     });
     const successCounts = await this.prisma.bookingAttempt.groupBy({
@@ -128,7 +131,10 @@ export class SchedulesService {
           take: RECENT_ATTEMPTS_LIMIT,
           select: { id: true, createdAt: true, status: true, courtName: true },
         },
-        _count: { select: { attempts: true } },
+        // SKIPPED-pogingen zijn geen echte boekpogingen (bewust overgeslagen
+        // door een uitzondering) en tellen daarom niet mee in totalCount —
+        // anders vertekent een skip het zichtbare succespercentage.
+        _count: { select: { attempts: { where: { status: { not: 'SKIPPED' } } } } },
       },
     });
     const successCount = await this.prisma.bookingAttempt.count({

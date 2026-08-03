@@ -23,6 +23,7 @@ enum AttemptStatus {
   NO_SLOT_FOUND
   BOOKING_FAILED
   ERROR
+  SKIPPED
 }
 
 enum TriggerType {
@@ -68,25 +69,48 @@ model Account {
 /// Account. Meerdere rijen per account mogelijk (bv. vrijdagochtend met
 /// Henk, zondagavond met Conny).
 model BookingSchedule {
-  id                 String           @id @default(uuid())
+  id                 String              @id @default(uuid())
   accountId          Int
-  account            Account          @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  account            Account             @relation(fields: [accountId], references: [id], onDelete: Cascade)
   label              String?
-  partnerMemberIds   String[]         @default([])
+  partnerMemberIds   String[]            @default([])
   /// Weergavenamen, zelfde volgorde/index als partnerMemberIds (denormalized
   /// voor het dashboard, zodat je geen live KNLTB-lookup nodig hebt om
   /// bestaande medespelers te tonen).
-  partnerMemberNames String[]         @default([])
-  targetWeekday      Weekday          @default(MONDAY)
-  targetTime         String           @default("19:00")
-  courtPreference    String[]         @default([])
-  durationMinutes    Int              @default(60)
-  enabled            Boolean          @default(true)
-  createdAt          DateTime         @default(now())
-  updatedAt          DateTime         @updatedAt
+  partnerMemberNames String[]            @default([])
+  targetWeekday      Weekday             @default(MONDAY)
+  targetTime         String              @default("19:00")
+  courtPreference    String[]            @default([])
+  durationMinutes    Int                 @default(60)
+  enabled            Boolean             @default(true)
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
   attempts           BookingAttempt[]
+  exceptions         ScheduleException[]
 
   @@index([accountId])
+}
+
+/// Eenmalige uitzondering op een BookingSchedule voor precies één
+/// kalenderdatum: óf de reservering overslaan (skip), óf een ander
+/// medespelers-groepje gebruiken voor die datum — nooit beide (skip=true
+/// impliceert lege partner-arrays, afgedwongen in ScheduleExceptionsService).
+/// `date` wordt overal als kale YYYY-MM-DD-string behandeld (UTC-middernacht
+/// encoding) om DST-gerelateerde off-by-one-bugs te voorkomen — zie
+/// BookingRunnerService en ScheduleExceptionsService.
+model ScheduleException {
+  id                 String          @id @default(uuid())
+  scheduleId         String
+  schedule           BookingSchedule @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
+  date               DateTime        @db.Date
+  skip               Boolean         @default(true)
+  partnerMemberIds   String[]        @default([])
+  partnerMemberNames String[]        @default([])
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
+
+  @@unique([scheduleId, date])
+  @@index([scheduleId])
 }
 
 /// Singleton rij (id altijd 1) met site-brede statistieken voor de

@@ -5,6 +5,8 @@ import type {
   Partner,
   RunNowResult,
   Schedule,
+  ScheduleException,
+  ScheduleExceptionInput,
   ScheduleInput,
   Stats,
   UpdateAccountInput,
@@ -63,6 +65,28 @@ export function setScheduleEnabled(id: string, enabled: boolean): Promise<{ ok: 
     method: 'PATCH',
     body: JSON.stringify({ enabled }),
   });
+}
+
+export function listScheduleExceptions(scheduleId: string): Promise<ScheduleException[]> {
+  return request<ScheduleException[]>(`/schedules/${scheduleId}/exceptions`);
+}
+
+export function upsertScheduleException(
+  scheduleId: string,
+  date: string,
+  input: ScheduleExceptionInput,
+): Promise<ScheduleException> {
+  return request<ScheduleException>(`/schedules/${scheduleId}/exceptions/${date}`, {
+    method: 'PUT',
+    body: JSON.stringify(input),
+  });
+}
+
+export function deleteScheduleException(
+  scheduleId: string,
+  date: string,
+): Promise<{ ok: boolean }> {
+  return request(`/schedules/${scheduleId}/exceptions/${date}`, { method: 'DELETE' });
 }
 
 export function runScheduleNow(

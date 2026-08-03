@@ -19,6 +19,7 @@ const STATUS_EMOJI: Record<string, string> = {
   NO_SLOT_FOUND: '❌',
   BOOKING_FAILED: '❌',
   ERROR: '❌',
+  SKIPPED: '⏭️',
 };
 
 function formatDate(iso: string): string {
@@ -29,10 +30,12 @@ export function ScheduleCard({
   schedule,
   onChanged,
   onEdit,
+  onExceptions,
 }: {
   schedule: Schedule;
   onChanged: () => void;
   onEdit: (schedule: Schedule) => void;
+  onExceptions: (schedule: Schedule) => void;
 }) {
   const [busy, setBusy] = useState(false);
 
@@ -108,6 +111,9 @@ export function ScheduleCard({
       <div className="schedule-card-actions">
         <button type="button" onClick={() => onEdit(schedule)} disabled={busy}>
           Bewerken
+        </button>
+        <button type="button" onClick={() => onExceptions(schedule)} disabled={busy}>
+          Uitzonderingen
         </button>
         <button type="button" onClick={handleDelete} disabled={busy} className="danger-outline">
           Verwijderen
