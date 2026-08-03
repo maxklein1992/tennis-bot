@@ -21,6 +21,8 @@ export const nl = {
       'ReserveringBot boekt elke week automatisch je vaste baan bij de KNLTB, zodra deze ' +
       'beschikbaar komt — zonder dat je er zelf achteraan hoeft te zitten.',
     heroCta: 'Naar dashboard',
+    statsActiveUsers: 'actieve gebruikers',
+    statsTotalSchedules: 'reserveringen gemaakt',
     whatIsTitle: 'Wat is ReserveringBot?',
     whatIsText:
       'ReserveringBot is de makkelijkste manier om nooit meer je vaste baan mis te lopen. ' +

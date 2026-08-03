@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { computeNextTarget } from '../booking/target-time.util';
+import { GLOBAL_STATS_ID } from '../stats/stats.service';
 import { ScheduleInputDto } from './dto/schedule.dto';
 import type {
   AttemptStatus,
@@ -78,19 +79,29 @@ export class SchedulesService {
   }
 
   async create(userId: string, dto: ScheduleInputDto) {
-    const schedule = await this.prisma.bookingSchedule.create({
-      data: {
-        account: { connect: { userId } },
-        label: dto.label,
-        partnerMemberIds: dto.partners?.map((p) => p.id) ?? [],
-        partnerMemberNames: dto.partners?.map((p) => p.name) ?? [],
-        targetWeekday: dto.targetWeekday ?? 'MONDAY',
-        targetTime: dto.targetTime ?? '19:00',
-        courtPreference: dto.courtPreference ?? [],
-        durationMinutes: dto.durationMinutes ?? 60,
-        enabled: dto.enabled ?? true,
-      },
-    });
+    // Ophogen van de site-brede teller (voor de homepage-statistiek) gebeurt
+    // in dezelfde transactie: die telt hoeveel reserveringen er ooit zijn
+    // aangemaakt en mag nooit dalen, ook niet als deze reservering later
+    // wordt verwijderd (zie remove(), die de teller bewust niet aanraakt).
+    const [schedule] = await this.prisma.$transaction([
+      this.prisma.bookingSchedule.create({
+        data: {
+          account: { connect: { userId } },
+          label: dto.label,
+          partnerMemberIds: dto.partners?.map((p) => p.id) ?? [],
+          partnerMemberNames: dto.partners?.map((p) => p.name) ?? [],
+          targetWeekday: dto.targetWeekday ?? 'MONDAY',
+          targetTime: dto.targetTime ?? '19:00',
+          courtPreference: dto.courtPreference ?? [],
+          durationMinutes: dto.durationMinutes ?? 60,
+          enabled: dto.enabled ?? true,
+        },
+      }),
+      this.prisma.globalStats.update({
+        where: { id: GLOBAL_STATS_ID },
+        data: { totalSchedulesCreated: { increment: 1 } },
+      }),
+    ]);
     return this.toView({ ...schedule, attempts: [], _count: { attempts: 0 } }, 0);
   }
 

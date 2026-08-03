@@ -67,6 +67,11 @@ export interface UpdateAccountInput {
   password?: string;
 }
 
+export interface Stats {
+  activeUsers: number;
+  totalSchedules: number;
+}
+
 export interface Club {
   id: string;
   name: string;

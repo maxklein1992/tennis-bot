@@ -89,6 +89,17 @@ model BookingSchedule {
   @@index([accountId])
 }
 
+/// Singleton rij (id altijd 1) met site-brede statistieken voor de
+/// homepage. In tegenstelling tot Account is dit bewust wél een singleton:
+/// het is geen per-gebruiker data, maar een cijfer over alle gebruikers
+/// heen.
+model GlobalStats {
+  id                    Int @id @default(1)
+  /// Opgehoogd bij elke BookingSchedule.create(), nooit verlaagd — ook niet
+  /// als een reservering later verwijderd wordt. Zie SchedulesService.create().
+  totalSchedulesCreated Int @default(0)
+}
+
 model BookingAttempt {
   id                 String          @id @default(uuid())
   scheduleId         String

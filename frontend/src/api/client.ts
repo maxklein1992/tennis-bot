@@ -6,6 +6,7 @@ import type {
   RunNowResult,
   Schedule,
   ScheduleInput,
+  Stats,
   UpdateAccountInput,
 } from './types';
 import { clearToken, getToken } from './auth';
@@ -99,4 +100,8 @@ export function submitOnboarding(input: OnboardingInput): Promise<Account> {
     method: 'POST',
     body: JSON.stringify(input),
   });
+}
+
+export function getStats(): Promise<Stats> {
+  return request<Stats>('/stats');
 }
