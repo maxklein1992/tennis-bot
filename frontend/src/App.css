@@ -1031,6 +1031,14 @@
   gap: 12px;
 }
 
+/* .form-row hier is row-based zonder stretch, dus .password-input krijgt
+   anders een auto-breedte op basis van zijn eigen input (incl. de extra
+   padding-right voor het oog-icoontje) i.p.v. dezelfde 220px als het
+   lidmaatschapsnummerveld. */
+.account-form-fields .password-input {
+  width: 220px;
+}
+
 /* Shared form styles (used by settings-form / modal / account-form) */
 .settings-form {
   display: flex;
@@ -1059,6 +1067,7 @@
   background: var(--bg);
   color: var(--text-h);
   min-width: 220px;
+  box-sizing: border-box;
 }
 
 .form-row input:focus,
@@ -1075,6 +1084,7 @@
   position: relative;
   display: inline-flex;
   min-width: 220px;
+  box-sizing: border-box;
 }
 
 .password-input input {
