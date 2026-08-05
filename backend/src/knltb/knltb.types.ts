@@ -38,6 +38,9 @@ export interface ClubSearchResult {
 export interface FoundSlot {
   courtId: string;
   courtName: string;
+  /** True als dit een andere baan is dan de ingestelde voorkeur (eenmalige
+   * fallback naar hetzelfde baantype omdat de voorkeursbaan geen slot had). */
+  isFallback: boolean;
 }
 
 export interface ValidationResult {

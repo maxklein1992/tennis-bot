@@ -74,6 +74,129 @@ describe('findAvailableSlot', () => {
     });
     const result = findAvailableSlot(courts, target, ['Tennisbaan 2']);
     expect(result?.courtId).toBe('court-2');
+    expect(result?.isFallback).toBe(false);
+  });
+
+  it('valt nooit terug op alle banen als de voorkeur naar geen enkele bestaande baan verwijst', () => {
+    // Regressietest: court-1 heeft wél een slot om 17:00 zonder voorkeur,
+    // maar een niet-resolvende voorkeur (typo/onbestaande naam) moet altijd
+    // null opleveren — nooit stilzwijgend op alle banen zoeken.
+    const target = DateTime.fromISO('2026-07-30T17:00:00', {
+      zone: 'Europe/Amsterdam',
+    });
+    const result = findAvailableSlot(courts, target, ['Baan die niet bestaat']);
+    expect(result).toBeNull();
+  });
+
+  it('valt terug op een andere baan van hetzelfde type als de voorkeursbaan geen slot heeft', () => {
+    const target = DateTime.fromISO('2026-07-30T17:00:00', {
+      zone: 'Europe/Amsterdam',
+    });
+    const fallbackCourts: CourtAvailability[] = [
+      {
+        court_details: { id: 'preferred', name: 'Tennisbaan 1 / Test' },
+        timeline: { blocks: [{ block_type: 'courtClosedByOpeningHours', slots: null }] },
+      },
+      {
+        court_details: { id: 'other-tennis', name: 'Tennisbaan 2 / Test' },
+        timeline: {
+          blocks: [
+            {
+              block_type: 'available',
+              slots: {
+                '2players': [
+                  {
+                    start_time: '2026-07-30T15:00:00Z',
+                    end_time: '2026-07-30T16:00:00Z',
+                    available: true,
+                  },
+                ],
+              },
+            },
+          ],
+        },
+      },
+    ];
+    const result = findAvailableSlot(fallbackCourts, target, ['Tennisbaan 1']);
+    expect(result).toEqual({
+      courtId: 'other-tennis',
+      courtName: 'Tennisbaan 2 / Test',
+      isFallback: true,
+    });
+  });
+
+  it('valt niet terug op een baan van een ander type', () => {
+    const target = DateTime.fromISO('2026-07-30T17:00:00', {
+      zone: 'Europe/Amsterdam',
+    });
+    const fallbackCourts: CourtAvailability[] = [
+      {
+        court_details: { id: 'preferred', name: 'Tennisbaan 1 / Test' },
+        timeline: { blocks: [{ block_type: 'courtClosedByOpeningHours', slots: null }] },
+      },
+      {
+        court_details: { id: 'padel', name: 'Padelbaan 1 / Test' },
+        timeline: {
+          blocks: [
+            {
+              block_type: 'available',
+              slots: {
+                '2players': [
+                  {
+                    start_time: '2026-07-30T15:00:00Z',
+                    end_time: '2026-07-30T16:00:00Z',
+                    available: true,
+                  },
+                ],
+              },
+            },
+          ],
+        },
+      },
+    ];
+    const result = findAvailableSlot(fallbackCourts, target, ['Tennisbaan 1']);
+    expect(result).toBeNull();
+  });
+
+  it('probeert een type-fallback als geen van meerdere voorkeursbanen een slot heeft', () => {
+    const target = DateTime.fromISO('2026-07-30T17:00:00', {
+      zone: 'Europe/Amsterdam',
+    });
+    const fallbackCourts: CourtAvailability[] = [
+      {
+        court_details: { id: 'pref-1', name: 'Tennisbaan 1 / Test' },
+        timeline: { blocks: [{ block_type: 'courtClosedByOpeningHours', slots: null }] },
+      },
+      {
+        court_details: { id: 'pref-2', name: 'Tennisbaan 2 / Test' },
+        timeline: { blocks: [{ block_type: 'courtClosedByOpeningHours', slots: null }] },
+      },
+      {
+        court_details: { id: 'fallback', name: 'Tennisbaan 3 / Test' },
+        timeline: {
+          blocks: [
+            {
+              block_type: 'available',
+              slots: {
+                '2players': [
+                  {
+                    start_time: '2026-07-30T15:00:00Z',
+                    end_time: '2026-07-30T16:00:00Z',
+                    available: true,
+                  },
+                ],
+              },
+            },
+          ],
+        },
+      },
+    ];
+    const result = findAvailableSlot(fallbackCourts, target, ['Tennisbaan 1', 'Tennisbaan 2']);
+    expect(result).toEqual({
+      courtId: 'fallback',
+      courtName: 'Tennisbaan 3 / Test',
+      isFallback: true,
+    });
   });
 
   it('geeft null terug als de slot niet beschikbaar is', () => {

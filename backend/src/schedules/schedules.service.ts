@@ -20,6 +20,7 @@ export interface RecordAttemptInput {
   status: AttemptStatus;
   courtId?: string;
   courtName?: string;
+  courtFallback?: boolean;
   validationResponse?: unknown;
   reservationId?: string;
   errorMessage?: string;
@@ -39,7 +40,13 @@ export class SchedulesService {
         attempts: {
           orderBy: { createdAt: 'desc' },
           take: RECENT_ATTEMPTS_LIMIT,
-          select: { id: true, createdAt: true, status: true, courtName: true },
+          select: {
+            id: true,
+            createdAt: true,
+            status: true,
+            courtName: true,
+            courtFallback: true,
+          },
         },
         // SKIPPED-pogingen zijn geen echte boekpogingen (bewust overgeslagen
         // door een uitzondering) en tellen daarom niet mee in totalCount —
@@ -129,7 +136,13 @@ export class SchedulesService {
         attempts: {
           orderBy: { createdAt: 'desc' },
           take: RECENT_ATTEMPTS_LIMIT,
-          select: { id: true, createdAt: true, status: true, courtName: true },
+          select: {
+            id: true,
+            createdAt: true,
+            status: true,
+            courtName: true,
+            courtFallback: true,
+          },
         },
         // SKIPPED-pogingen zijn geen echte boekpogingen (bewust overgeslagen
         // door een uitzondering) en tellen daarom niet mee in totalCount —
@@ -168,6 +181,7 @@ export class SchedulesService {
         status: input.status,
         courtId: input.courtId,
         courtName: input.courtName,
+        courtFallback: input.courtFallback,
         validationResponse: input.validationResponse as Prisma.InputJsonValue,
         reservationId: input.reservationId,
         errorMessage: input.errorMessage,
@@ -184,6 +198,7 @@ export class SchedulesService {
         createdAt: Date;
         status: AttemptStatus;
         courtName: string | null;
+        courtFallback: boolean;
       }>;
       _count: { attempts: number };
     },
@@ -209,6 +224,7 @@ export class SchedulesService {
         createdAt: a.createdAt,
         status: a.status,
         courtName: a.courtName,
+        courtFallback: a.courtFallback,
       })),
       successCount,
       totalCount: schedule._count.attempts,
