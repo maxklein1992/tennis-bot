@@ -25,6 +25,7 @@ export interface RecentAttempt {
   createdAt: string;
   status: AttemptStatus;
   courtName: string | null;
+  courtFallback: boolean;
 }
 
 export interface Schedule {

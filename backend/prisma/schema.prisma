@@ -136,6 +136,10 @@ model BookingAttempt {
   status             AttemptStatus
   courtId            String?
   courtName          String?
+  /// True als dit een andere baan is dan de ingestelde courtPreference
+  /// (eenmalige fallback naar hetzelfde baantype omdat de voorkeursbaan
+  /// geen slot had, bv. bezet voor training). Zie knltb-matching.ts.
+  courtFallback      Boolean         @default(false)
   validationResponse Json?
   reservationId      String?
   errorMessage       String?
