@@ -32,11 +32,11 @@ export class AuthService {
   ) {}
 
   /**
-   * Maakt een nieuwe gebruiker aan, samen met een lege, gekoppelde Account-
-   * rij (dezelfde lege defaults die vroeger via env-vars werden geseed) zodat
-   * de gebruiker meteen door de onboardingflow kan om zijn eigen KNLTB-
-   * gegevens te koppelen. Elke gebruiker krijgt zijn eigen Account — geen
-   * gedeelde toegang tussen accounts.
+   * Maakt een nieuwe gebruiker aan, samen met een lege, gekoppelde
+   * KnltbAccount-rij (dezelfde lege defaults die vroeger via env-vars werden
+   * geseed) zodat de gebruiker meteen door de onboardingflow kan om zijn
+   * eigen KNLTB-gegevens te koppelen. Elke gebruiker krijgt zijn eigen
+   * KnltbAccount — geen gedeelde toegang tussen accounts.
    */
   async register(dto: RegisterDto): Promise<AuthResult> {
     const passwordHash = await bcrypt.hash(dto.password, SALT_ROUNDS);

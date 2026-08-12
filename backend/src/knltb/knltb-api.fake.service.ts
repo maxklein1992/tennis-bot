@@ -71,27 +71,37 @@ export class FakeKnltbApiService implements IKnltbApiService {
     dayStartUtcIso: string,
   ): Promise<CourtAvailability[]> {
     const dayStart = DateTime.fromISO(dayStartUtcIso);
+    const allAvailableSlots = () => ({
+      '2players': Array.from({ length: 24 }, (_, hour) => {
+        const start = dayStart.plus({ hours: hour });
+        return {
+          start_time: start.toISO({ suppressMilliseconds: true })!,
+          end_time: start.plus({ hours: 1 }).toISO({ suppressMilliseconds: true })!,
+          available: true,
+        };
+      }),
+    });
     return [
       {
         court_details: { id: 'fake-court-1', name: 'Tennisbaan 1 / Fake' },
         timeline: {
-          blocks: [
-            {
-              block_type: 'available',
-              slots: {
-                '2players': Array.from({ length: 24 }, (_, hour) => {
-                  const start = dayStart.plus({ hours: hour });
-                  return {
-                    start_time: start.toISO({ suppressMilliseconds: true })!,
-                    end_time: start
-                      .plus({ hours: 1 })
-                      .toISO({ suppressMilliseconds: true })!,
-                    available: true,
-                  };
-                }),
-              },
-            },
-          ],
+          blocks: [{ block_type: 'available', slots: allAvailableSlots() }],
+        },
+      },
+      // Altijd "bezet" (bv. training) — zet lokaal courtPreference:
+      // ['Tennisbaan 2'] om de type-fallback naar fake-court-1 te forceren.
+      {
+        court_details: { id: 'fake-court-2', name: 'Tennisbaan 2 / Fake' },
+        timeline: {
+          blocks: [{ block_type: 'courtClosedByOpeningHours', slots: null }],
+        },
+      },
+      // Ander baantype, altijd beschikbaar — bewijst dat een tennis-voorkeur
+      // nooit op deze baan uitkomt.
+      {
+        court_details: { id: 'fake-court-3', name: 'Padelbaan 1 / Fake' },
+        timeline: {
+          blocks: [{ block_type: 'available', slots: allAvailableSlots() }],
         },
       },
     ];

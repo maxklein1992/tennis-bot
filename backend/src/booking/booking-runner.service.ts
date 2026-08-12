@@ -119,6 +119,7 @@ export class BookingRunnerService {
               status: 'VALIDATION_FAILED',
               courtId: found.courtId,
               courtName: found.courtName,
+              courtFallback: found.isFallback,
               validationResponse: validation.body,
               errorMessage: JSON.stringify(validation.body),
               durationMs: Date.now() - startedAt,
@@ -139,6 +140,7 @@ export class BookingRunnerService {
               status: 'SUCCESS',
               courtId: found.courtId,
               courtName: found.courtName,
+              courtFallback: found.isFallback,
               validationResponse: validation.body,
               durationMs: Date.now() - startedAt,
             });
@@ -167,6 +169,7 @@ export class BookingRunnerService {
             status,
             courtId: found.courtId,
             courtName: found.courtName,
+            courtFallback: found.isFallback,
             validationResponse: validation.body,
             reservationId:
               result.ok && typeof result.body === 'object' && result.body

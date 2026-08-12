@@ -98,7 +98,10 @@ export function ScheduleCard({
         <div className="emoji-row">
           {schedule.recentAttempts.length === 0 && <span className="muted">Nog geen pogingen</span>}
           {schedule.recentAttempts.map((a) => (
-            <span key={a.id} title={`${formatDate(a.createdAt)} — ${a.status}`}>
+            <span
+              key={a.id}
+              title={`${formatDate(a.createdAt)} — ${a.status}${a.courtFallback ? ' (andere baan: voorkeur niet beschikbaar)' : ''}`}
+            >
               {STATUS_EMOJI[a.status] ?? '❔'}
             </span>
           ))}

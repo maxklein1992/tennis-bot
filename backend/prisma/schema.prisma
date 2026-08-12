@@ -31,20 +31,21 @@ enum TriggerType {
   MANUAL
 }
 
-/// Dashboard-gebruiker (inloggen op het dashboard zelf). Los van Account,
-/// dat de KNLTB-inloggegevens bevat.
+/// Dashboard-gebruiker (inloggen op het dashboard zelf). Los van
+/// KnltbAccount, dat de KNLTB-inloggegevens bevat.
 model User {
-  id           String   @id @default(uuid())
-  email        String   @unique
+  id           String        @id @default(uuid())
+  email        String        @unique
   passwordHash String
-  createdAt    DateTime @default(now())
-  account      Account?
+  createdAt    DateTime      @default(now())
+  account      KnltbAccount?
 }
 
 /// De KNLTB-inloggegevens van precies één User (1-op-1). Meerdere
 /// wekelijkse reserveringen kunnen hetzelfde account delen, vandaar apart
-/// van BookingSchedule.
-model Account {
+/// van BookingSchedule. Heet KnltbAccount (i.p.v. Account) om niet te
+/// verwarren met User, dat de dashboard-inloggegevens bevat.
+model KnltbAccount {
   id               Int               @id @default(autoincrement())
   userId           String            @unique
   user             User              @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -66,12 +67,12 @@ model Account {
 }
 
 /// Eén wekelijkse terugkerende reservering, gekoppeld aan precies één
-/// Account. Meerdere rijen per account mogelijk (bv. vrijdagochtend met
+/// KnltbAccount. Meerdere rijen per account mogelijk (bv. vrijdagochtend met
 /// Henk, zondagavond met Conny).
 model BookingSchedule {
   id                 String              @id @default(uuid())
   accountId          Int
-  account            Account             @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  account            KnltbAccount        @relation(fields: [accountId], references: [id], onDelete: Cascade)
   label              String?
   partnerMemberIds   String[]            @default([])
   /// Weergavenamen, zelfde volgorde/index als partnerMemberIds (denormalized
@@ -114,9 +115,9 @@ model ScheduleException {
 }
 
 /// Singleton rij (id altijd 1) met site-brede statistieken voor de
-/// homepage. In tegenstelling tot Account is dit bewust wél een singleton:
-/// het is geen per-gebruiker data, maar een cijfer over alle gebruikers
-/// heen.
+/// homepage. In tegenstelling tot KnltbAccount is dit bewust wél een
+/// singleton: het is geen per-gebruiker data, maar een cijfer over alle
+/// gebruikers heen.
 model GlobalStats {
   id                    Int @id @default(1)
   /// Opgehoogd bij elke BookingSchedule.create(), nooit verlaagd — ook niet
@@ -136,6 +137,10 @@ model BookingAttempt {
   status             AttemptStatus
   courtId            String?
   courtName          String?
+  /// True als dit een andere baan is dan de ingestelde courtPreference
+  /// (eenmalige fallback naar hetzelfde baantype omdat de voorkeursbaan
+  /// geen slot had, bv. bezet voor training). Zie knltb-matching.ts.
+  courtFallback      Boolean         @default(false)
   validationResponse Json?
   reservationId      String?
   errorMessage       String?

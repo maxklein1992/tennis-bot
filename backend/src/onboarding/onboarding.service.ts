@@ -20,10 +20,10 @@ export class OnboardingService {
 
   /**
    * Verifieert de opgegeven KNLTB-inloggegevens (issue #4) voordat ze worden
-   * opgeslagen. Alleen bij een succesvolle login wordt de Account-rij
+   * opgeslagen. Alleen bij een succesvolle login wordt de KnltbAccount-rij
    * bijgewerkt en onboardedAt gezet — bij falen blijft de gebruiker op de
    * onboardingpagina met een duidelijke foutmelding, en verandert er niets
-   * aan het bestaande Account-record.
+   * aan het bestaande KnltbAccount-record.
    */
   async submit(userId: string, dto: SubmitOnboardingDto): Promise<AccountView> {
     const credentials = {

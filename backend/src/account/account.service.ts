@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { UpdateAccountDto } from './dto/update-account.dto';
-import type { Account, Prisma } from '@prisma/client';
+import type { KnltbAccount, Prisma } from '@prisma/client';
 
 export interface AccountView {
   clubId: string;
@@ -23,7 +23,7 @@ export interface CompleteOnboardingInput {
   password: string;
 }
 
-function toView(account: Account): AccountView {
+function toView(account: KnltbAccount): AccountView {
   return {
     clubId: account.clubId,
     clubName: account.clubName,
@@ -40,35 +40,35 @@ export class AccountService {
   constructor(private readonly prisma: PrismaService) {}
 
   async get(userId: string): Promise<AccountView> {
-    const account = await this.prisma.account.findUniqueOrThrow({
+    const account = await this.prisma.knltbAccount.findUniqueOrThrow({
       where: { userId },
     });
     return toView(account);
   }
 
   /** Volledig record, inclusief wachtwoord — alleen voor intern gebruik (onboarding/members). */
-  async getInternal(userId: string): Promise<Account> {
-    return this.prisma.account.findUniqueOrThrow({ where: { userId } });
+  async getInternal(userId: string): Promise<KnltbAccount> {
+    return this.prisma.knltbAccount.findUniqueOrThrow({ where: { userId } });
   }
 
   /**
-   * Volledig record via het Account-id zelf i.p.v. userId — alleen voor de
+   * Volledig record via het KnltbAccount-id zelf i.p.v. userId — alleen voor de
    * booking-runner, die enkel `schedule.accountId` beschikbaar heeft (geen
    * ingelogde gebruiker/request in scope, draait als achtergrondlus).
    */
-  async getInternalByAccountId(accountId: number): Promise<Account> {
-    return this.prisma.account.findUniqueOrThrow({ where: { id: accountId } });
+  async getInternalByAccountId(accountId: number): Promise<KnltbAccount> {
+    return this.prisma.knltbAccount.findUniqueOrThrow({ where: { id: accountId } });
   }
 
   async update(userId: string, dto: UpdateAccountDto): Promise<AccountView> {
-    const data: Prisma.AccountUpdateInput = {
+    const data: Prisma.KnltbAccountUpdateInput = {
       clubId: dto.clubId,
       membershipNumber: dto.membershipNumber,
     };
     if (dto.password) {
       data.password = dto.password;
     }
-    const account = await this.prisma.account.update({
+    const account = await this.prisma.knltbAccount.update({
       where: { userId },
       data,
     });
@@ -84,7 +84,7 @@ export class AccountService {
     userId: string,
     input: CompleteOnboardingInput,
   ): Promise<AccountView> {
-    const account = await this.prisma.account.update({
+    const account = await this.prisma.knltbAccount.update({
       where: { userId },
       data: {
         fullName: input.fullName,
