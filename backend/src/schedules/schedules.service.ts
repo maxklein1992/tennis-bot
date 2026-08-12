@@ -1,8 +1,4 @@
-import {
-  ConflictException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { computeNextTarget } from '../booking/target-time.util';
 import { GLOBAL_STATS_ID } from '../stats/stats.service';
@@ -12,28 +8,9 @@ import type {
   BookingSchedule,
   Prisma,
   TriggerType,
-  Weekday,
 } from '@prisma/client';
 
 const RECENT_ATTEMPTS_LIMIT = 15;
-
-function normalizeCourtName(name: string): string {
-  return name.trim().toLowerCase();
-}
-
-/** [start, end) in minuten sinds middernacht. */
-function toTimeRange(
-  targetTime: string,
-  durationMinutes: number,
-): [number, number] {
-  const [hour, minute] = targetTime.split(':').map(Number);
-  const start = hour * 60 + minute;
-  return [start, start + durationMinutes];
-}
-
-function rangesOverlap(a: [number, number], b: [number, number]): boolean {
-  return a[0] < b[1] && b[0] < a[1];
-}
 
 export interface RecordAttemptInput {
   trigger: TriggerType;
@@ -112,21 +89,6 @@ export class SchedulesService {
   }
 
   async create(userId: string, dto: ScheduleInputDto) {
-    const targetWeekday = dto.targetWeekday ?? 'MONDAY';
-    const targetTime = dto.targetTime ?? '19:00';
-    const durationMinutes = dto.durationMinutes ?? 60;
-    const courtPreference = dto.courtPreference ?? [];
-    const enabled = dto.enabled ?? true;
-    if (enabled) {
-      await this.assertNoConflict(
-        userId,
-        targetWeekday,
-        targetTime,
-        durationMinutes,
-        courtPreference,
-      );
-    }
-
     // Ophogen van de site-brede teller (voor de homepage-statistiek) gebeurt
     // in dezelfde transactie: die telt hoeveel reserveringen er ooit zijn
     // aangemaakt en mag nooit dalen, ook niet als deze reservering later
@@ -138,11 +100,11 @@ export class SchedulesService {
           label: dto.label,
           partnerMemberIds: dto.partners?.map((p) => p.id) ?? [],
           partnerMemberNames: dto.partners?.map((p) => p.name) ?? [],
-          targetWeekday,
-          targetTime,
-          courtPreference,
-          durationMinutes,
-          enabled,
+          targetWeekday: dto.targetWeekday ?? 'MONDAY',
+          targetTime: dto.targetTime ?? '19:00',
+          courtPreference: dto.courtPreference ?? [],
+          durationMinutes: dto.durationMinutes ?? 60,
+          enabled: dto.enabled ?? true,
         },
       }),
       this.prisma.globalStats.update({
@@ -154,23 +116,7 @@ export class SchedulesService {
   }
 
   async update(id: string, userId: string, dto: ScheduleInputDto) {
-    const existing = await this.findOwned(id, userId);
-    const targetWeekday = dto.targetWeekday ?? existing.targetWeekday;
-    const targetTime = dto.targetTime ?? existing.targetTime;
-    const durationMinutes = dto.durationMinutes ?? existing.durationMinutes;
-    const courtPreference = dto.courtPreference ?? existing.courtPreference;
-    const enabled = dto.enabled ?? existing.enabled;
-    if (enabled) {
-      await this.assertNoConflict(
-        userId,
-        targetWeekday,
-        targetTime,
-        durationMinutes,
-        courtPreference,
-        id,
-      );
-    }
-
+    await this.findOwned(id, userId);
     const data: Prisma.BookingScheduleUpdateInput = {
       label: dto.label,
       targetWeekday: dto.targetWeekday,
@@ -211,17 +157,7 @@ export class SchedulesService {
   }
 
   async setEnabled(id: string, userId: string, enabled: boolean) {
-    const existing = await this.findOwned(id, userId);
-    if (enabled) {
-      await this.assertNoConflict(
-        userId,
-        existing.targetWeekday,
-        existing.targetTime,
-        existing.durationMinutes,
-        existing.courtPreference,
-        id,
-      );
-    }
+    await this.findOwned(id, userId);
     await this.prisma.bookingSchedule.update({ where: { id }, data: { enabled } });
   }
 
@@ -253,66 +189,6 @@ export class SchedulesService {
         durationMs: input.durationMs,
       },
     });
-  }
-
-  /**
-   * Voorkomt dat twee gebruikers bij dezelfde vereniging een schema
-   * aanmaken/inschakelen voor dezelfde baan op een overlappende dag/tijd —
-   * die kunnen toch nooit allebei die baan daadwerkelijk boeken. Alleen te
-   * bepalen als er een concrete baanvoorkeur is opgegeven (leeg = "maakt
-   * niet uit welke baan", daar valt geen conflict over vast te stellen).
-   */
-  private async assertNoConflict(
-    userId: string,
-    targetWeekday: Weekday,
-    targetTime: string,
-    durationMinutes: number,
-    courtPreference: string[],
-    excludeScheduleId?: string,
-  ) {
-    if (courtPreference.length === 0) return;
-
-    const account = await this.prisma.knltbAccount.findUniqueOrThrow({
-      where: { userId },
-      select: { clubId: true },
-    });
-    const ownRange = toTimeRange(targetTime, durationMinutes);
-    const ownCourts = new Set(courtPreference.map(normalizeCourtName));
-
-    const others = await this.prisma.bookingSchedule.findMany({
-      where: {
-        targetWeekday,
-        enabled: true,
-        account: { clubId: account.clubId, userId: { not: userId } },
-        ...(excludeScheduleId ? { id: { not: excludeScheduleId } } : {}),
-      },
-      select: {
-        targetTime: true,
-        durationMinutes: true,
-        courtPreference: true,
-      },
-    });
-
-    const hasConflict = others.some((other) => {
-      if (other.courtPreference.length === 0) return false;
-      if (
-        !rangesOverlap(
-          ownRange,
-          toTimeRange(other.targetTime, other.durationMinutes),
-        )
-      ) {
-        return false;
-      }
-      return other.courtPreference.some((name) =>
-        ownCourts.has(normalizeCourtName(name)),
-      );
-    });
-
-    if (hasConflict) {
-      throw new ConflictException(
-        'Deze baan is op dit tijdstip al gereserveerd door een andere gebruiker bij deze vereniging.',
-      );
-    }
   }
 
   private toView(
