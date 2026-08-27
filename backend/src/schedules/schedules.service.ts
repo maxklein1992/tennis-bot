@@ -5,7 +5,6 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { computeNextTarget } from '../booking/target-time.util';
-import { GLOBAL_STATS_ID } from '../stats/stats.service';
 import { ScheduleInputDto } from './dto/schedule.dto';
 import type {
   AttemptStatus,
@@ -127,29 +126,19 @@ export class SchedulesService {
       );
     }
 
-    // Ophogen van de site-brede teller (voor de homepage-statistiek) gebeurt
-    // in dezelfde transactie: die telt hoeveel reserveringen er ooit zijn
-    // aangemaakt en mag nooit dalen, ook niet als deze reservering later
-    // wordt verwijderd (zie remove(), die de teller bewust niet aanraakt).
-    const [schedule] = await this.prisma.$transaction([
-      this.prisma.bookingSchedule.create({
-        data: {
-          account: { connect: { userId } },
-          label: dto.label,
-          partnerMemberIds: dto.partners?.map((p) => p.id) ?? [],
-          partnerMemberNames: dto.partners?.map((p) => p.name) ?? [],
-          targetWeekday,
-          targetTime,
-          courtPreference,
-          durationMinutes,
-          enabled,
-        },
-      }),
-      this.prisma.globalStats.update({
-        where: { id: GLOBAL_STATS_ID },
-        data: { totalSchedulesCreated: { increment: 1 } },
-      }),
-    ]);
+    const schedule = await this.prisma.bookingSchedule.create({
+      data: {
+        account: { connect: { userId } },
+        label: dto.label,
+        partnerMemberIds: dto.partners?.map((p) => p.id) ?? [],
+        partnerMemberNames: dto.partners?.map((p) => p.name) ?? [],
+        targetWeekday,
+        targetTime,
+        courtPreference,
+        durationMinutes,
+        enabled,
+      },
+    });
     return this.toView({ ...schedule, attempts: [], _count: { attempts: 0 } }, 0);
   }
 
