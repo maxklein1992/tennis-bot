@@ -6,23 +6,27 @@ export interface StatsView {
   totalSchedules: number;
 }
 
-export const GLOBAL_STATS_ID = 1;
-
 @Injectable()
 export class StatsService {
   constructor(private readonly prisma: PrismaService) {}
 
   async get(): Promise<StatsView> {
-    const [activeAccounts, globalStats] = await Promise.all([
+    const [activeAccounts, successfulBookings] = await Promise.all([
       this.prisma.bookingSchedule.groupBy({
         by: ['accountId'],
         where: { enabled: true },
       }),
-      this.prisma.globalStats.findUniqueOrThrow({ where: { id: GLOBAL_STATS_ID } }),
+      // Elke geslaagde (niet-dryRun) BookingAttempt is één daadwerkelijk
+      // gereserveerde baan. Een doorlopende reservering die al 3 weken
+      // achter elkaar is geactiveerd telt dus 3x mee, niet 1x — in
+      // tegenstelling tot het tellen van BookingSchedule-rijen.
+      this.prisma.bookingAttempt.count({
+        where: { status: 'SUCCESS', dryRun: false },
+      }),
     ]);
     return {
       activeUsers: activeAccounts.length,
-      totalSchedules: globalStats.totalSchedulesCreated,
+      totalSchedules: successfulBookings,
     };
   }
 }

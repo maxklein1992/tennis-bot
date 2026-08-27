@@ -20,10 +20,6 @@ describe('SchedulesService — accountscheiding', () => {
       knltbAccount: {
         findUniqueOrThrow: jest.fn(),
       },
-      globalStats: {
-        update: jest.fn(),
-      },
-      $transaction: jest.fn(),
     };
     const service = new SchedulesService(prisma as unknown as PrismaService);
     return { service, prisma };
@@ -76,10 +72,6 @@ describe('SchedulesService — baanconflict tussen gebruikers', () => {
       knltbAccount: {
         findUniqueOrThrow: jest.fn().mockResolvedValue({ clubId: 'club-1' }),
       },
-      globalStats: {
-        update: jest.fn(),
-      },
-      $transaction: jest.fn(),
     };
     const service = new SchedulesService(prisma as unknown as PrismaService);
     return { service, prisma };
@@ -128,14 +120,12 @@ describe('SchedulesService — baanconflict tussen gebruikers', () => {
         courtPreference: ['Tennisbaan 2'],
       },
     ]);
-    prisma.$transaction.mockResolvedValue([
-      {
-        id: 'new-schedule',
-        partnerMemberIds: [],
-        partnerMemberNames: [],
-        ...dto,
-      },
-    ]);
+    prisma.bookingSchedule.create.mockResolvedValue({
+      id: 'new-schedule',
+      partnerMemberIds: [],
+      partnerMemberNames: [],
+      ...dto,
+    });
 
     await expect(service.create('user-a', dto)).resolves.toBeDefined();
   });
@@ -149,28 +139,24 @@ describe('SchedulesService — baanconflict tussen gebruikers', () => {
         courtPreference: ['Padel 1'],
       },
     ]);
-    prisma.$transaction.mockResolvedValue([
-      {
-        id: 'new-schedule',
-        partnerMemberIds: [],
-        partnerMemberNames: [],
-        ...dto,
-      },
-    ]);
+    prisma.bookingSchedule.create.mockResolvedValue({
+      id: 'new-schedule',
+      partnerMemberIds: [],
+      partnerMemberNames: [],
+      ...dto,
+    });
 
     await expect(service.create('user-a', dto)).resolves.toBeDefined();
   });
 
   it('create() slaat de conflictcheck helemaal over zonder baanvoorkeur', async () => {
     const { service, prisma } = build();
-    prisma.$transaction.mockResolvedValue([
-      {
-        id: 'new-schedule',
-        partnerMemberIds: [],
-        partnerMemberNames: [],
-        ...dto,
-      },
-    ]);
+    prisma.bookingSchedule.create.mockResolvedValue({
+      id: 'new-schedule',
+      partnerMemberIds: [],
+      partnerMemberNames: [],
+      ...dto,
+    });
 
     await service.create('user-a', { ...dto, courtPreference: [] });
 
